@@ -350,8 +350,14 @@ function showHUDMode() {
 function showCameraMode() {
   document.getElementById("hud-root").style.display = "none";
   document.getElementById("camera-mode").style.display = "block";
+
+  // 🔥 Show Consumer overlay
+  const consumer = document.getElementById("consumer-mode");
+  if (consumer) consumer.style.display = "block";
+
   startCamera();
 }
+
 
 function startCamera() {
   const video = document.getElementById("camera-feed");
@@ -460,6 +466,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
