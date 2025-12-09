@@ -201,10 +201,18 @@ let smoothHeading = null;
 
 function smoothCompassHeading(raw) {
   if (smoothHeading === null) smoothHeading = raw;
-  const alpha = 0.15; // smoothing factor
+
+  // Reject wild compass jumps (>25°)
+  if (Math.abs(raw - smoothHeading) > 25) {
+    return smoothHeading; // ignore spike
+  }
+
+  const alpha = 0.05; // stronger smoothing
   smoothHeading = alpha * raw + (1 - alpha) * smoothHeading;
+
   return smoothHeading;
 }
+
 function updateConsumerDirection(diff) {
   const line = document.getElementById("direction-line");
   if (!line) return;
@@ -477,6 +485,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
