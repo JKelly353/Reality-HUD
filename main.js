@@ -345,6 +345,9 @@ window.addEventListener("DOMContentLoaded", () => {
 function showHUDMode() {
   document.getElementById("hud-root").style.display = "block";
   document.getElementById("camera-mode").style.display = "none";
+
+  const consumer = document.getElementById("consumer-mode");
+  if (consumer) consumer.style.display = "none";
 }
 
 function showCameraMode() {
@@ -466,6 +469,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
