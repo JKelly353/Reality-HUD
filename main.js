@@ -153,22 +153,29 @@ function initGPS() {
   }
 
   navigator.geolocation.watchPosition(
-    (pos) => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      window.currentLat = lat;
-      window.currentLon = lon;
-      updateCoords(lat, lon);
-    },
-    (err) => {
-      console.warn("GPS error:", err);
-    },
-    {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 5000
-    }
-  );
+  (pos) => {
+    const rawLat = pos.coords.latitude;
+    const rawLon = pos.coords.longitude;
+
+    // 🔥 Apply GPS smoothing
+    const smooth = smoothGPS(rawLat, rawLon);
+
+    // 🔥 Store smoothed values globally
+    window.currentLat = smooth.lat;
+    window.currentLon = smooth.lon;
+
+    // 🔥 Update HUD with smoothed values
+    updateCoords(smooth.lat, smooth.lon);
+  },
+  (err) => {
+    console.warn("GPS error:", err);
+  },
+  {
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 5000
+  }
+);
 }
 
 // Start GPS on page load
@@ -372,6 +379,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
