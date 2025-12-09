@@ -227,3 +227,38 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// =========================
+// MODE SWITCHING
+// =========================
+
+function showHUDMode() {
+  document.getElementById("hud-root").style.display = "block";
+  document.getElementById("camera-mode").style.display = "none";
+}
+
+function showCameraMode() {
+  document.getElementById("hud-root").style.display = "none";
+  document.getElementById("camera-mode").style.display = "block";
+  startCamera();
+}
+
+function startCamera() {
+  const video = document.getElementById("camera-feed");
+
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "environment" }
+  })
+  .then(stream => {
+    video.srcObject = stream;
+  })
+  .catch(err => {
+    console.error("Camera error:", err);
+    alert("Unable to access camera.");
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btn-hud-mode").addEventListener("click", showHUDMode);
+  document.getElementById("btn-camera-mode").addEventListener("click", showCameraMode);
+});
+
