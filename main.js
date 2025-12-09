@@ -152,13 +152,20 @@ window.addEventListener("deviceorientation", (event) => {
   let heading = null;
 
   // iOS compass
-  if (event.webkitCompassHeading) {
-    heading = event.webkitCompassHeading;
-  }
-  // Android + fallback
-  else if (event.alpha !== null) {
-    heading = 360 - event.alpha;
-  }
+let heading = null;
+
+if (typeof event.webkitCompassHeading === "number") {
+  // iPhone TRUE compass
+  heading = event.webkitCompassHeading;
+} 
+else if (event.absolute === true && event.alpha !== null) {
+  // Android absolute orientation (sometimes real north)
+  heading = 360 - event.alpha;
+} 
+else {
+  // No compass available — ignore this frame
+  return;
+}
 
   if (heading !== null) {
 
@@ -487,6 +494,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
