@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tactical Reality HUD</title>
+
+  <!-- Make it fill the phone screen nicely -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Link to our CSS -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- HUD ROOT -->
+  <div id="hud-root">
+    <!-- Panel 1: Orientation + Zone -->
+    <section id="hud-panel-orientation" class="hud-panel">
+      <div class="hud-heading">ORIENTATION</div>
+      <div id="hud-heading-text">N ↑</div>
+      <div id="hud-zone-text">ZONE: UNKNOWN</div>
+      <div id="hud-status-text">STATUS: INITIALIZING</div>
+      <div id="hud-tags-count">TAGS NEARBY: 0</div>
+      <div id="hud-coords-text">COORDS: --, --</div>
+    </section>
+
+    <!-- Panel 2: Spatial Tag Stream -->
+    <section id="hud-panel-tags" class="hud-panel">
+      <div class="hud-heading">TACTICAL TAG FEED</div>
+      <div id="hud-tags-feed" class="hud-feed">
+        <div class="hud-feed-item hud-muted">No tags detected.</div>
+      </div>
+    </section>
+
+    <!-- Panel 3: Object / Zone Intel -->
+    <section id="hud-panel-intel" class="hud-panel">
+      <div class="hud-heading">ZONE / OBJECT INTEL</div>
+      <div id="hud-intel-body" class="hud-feed">
+        <div class="hud-feed-item hud-muted">No intel yet.</div>
+      </div>
+    </section>
+
+    <!-- Panel 4: AI Tactical Analysis (placeholder for now) -->
+    <section id="hud-panel-ai" class="hud-panel">
+      <div class="hud-heading">AI ANALYSIS</div>
+      <div id="hud-ai-body" class="hud-feed">
+        <div class="hud-feed-item hud-muted">
+          AI link not initialized. (We’ll wire this up later.)
+        </div>
+      </div>
+    </section>
+  </div>
+
+ <div id="hud-controls">
+    <button id="btn-drop-tag">DROP TAG</button>
+  </div>
+
+  <!-- Link to our JS -->
+  <script src="main.js"></script>
+</body>
+</html>
