@@ -148,6 +148,8 @@ function initGPS() {
     (pos) => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
+      window.currentLat = lat;
+      window.currentLon = lon;
       updateCoords(lat, lon);
     },
     (err) => {
@@ -182,9 +184,14 @@ function initCompass() {
       }
 
       if (heading !== null) {
-        updateHeading(heading);
-      }
-    });
+    updateHeading(heading);
+
+    // 🔥 NEW: Update directional arrows in Camera Mode
+    if (window.currentLat && window.currentLon) {
+      updateCameraTags(window.currentLat, window.currentLon, heading);
+    }
+  }
+});
   } else {
     console.warn("DeviceOrientationEvent not supported.");
   }
@@ -340,6 +347,7 @@ function updateCameraTags(userLat, userLon, userHeading) {
     container.appendChild(tagEl);
   });
 }
+
 
 
 
