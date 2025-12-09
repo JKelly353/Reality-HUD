@@ -151,58 +151,41 @@ function degreesToCardinal(deg) {
 window.addEventListener("deviceorientation", (event) => {
   let heading = null;
 
-  // iOS compass
-let heading = null;
+  // Highest-priority: TRUE COMPASS on iPhone (iPhone 16 Pro supports this)
+  if (typeof event.webkitCompassHeading === "number") {
+    heading = event.webkitCompassHeading;
+  }
+  else {
+    // No true compass available yet — ignore this frame
+    return;
+  }
 
-if (typeof event.webkitCompassHeading === "number") {
-  // iPhone TRUE compass
-  heading = event.webkitCompassHeading;
-} 
-else if (event.absolute === true && event.alpha !== null) {
-  // Android absolute orientation (sometimes real north)
-  heading = 360 - event.alpha;
-} 
-else {
-  // No compass available — ignore this frame
-  return;
-}
+  // Smooth & update heading
+  const stableHeading = smoothCompassHeading(heading);
 
-  if (heading !== null) {
+  updateHeading(stableHeading);
 
-    // Smooth heading for stability
-    const stableHeading = smoothCompassHeading(heading);
+  // Tactical updates
+  if (window.currentLat && window.currentLon) {
+    updateCameraTags(window.currentLat, window.currentLon, stableHeading);
+  }
 
-    // =============================
-    // Tactical Mode Updates (if active)
-    // =============================
-    updateHeading(stableHeading);
+  // Consumer Mode
+  if (document.getElementById("consumer-mode").style.display === "block") {
 
-    if (window.currentLat && window.currentLon) {
-      updateCameraTags(window.currentLat, window.currentLon, stableHeading);
-    }
+    const tag = testTags[0];
+    if (tag && window.currentLat && window.currentLon) {
+      const d = distanceBetween(window.currentLat, window.currentLon, tag.lat, tag.lon);
+      const bearing = bearingTo(window.currentLat, window.currentLon, tag.lat, tag.lon);
 
-    // =============================
-    // Consumer Mode Updates
-    // =============================
-    if (document.getElementById("consumer-mode").style.display === "block") {
+      let diff = ((bearing - stableHeading + 540) % 360) - 180;
 
-      const tag = testTags[0];  // temporary target
-
-      if (tag && window.currentLat && window.currentLon) {
-
-        const d = distanceBetween(window.currentLat, window.currentLon, tag.lat, tag.lon);
-        const bearing = bearingTo(window.currentLat, window.currentLon, tag.lat, tag.lon);
-
-        // Final angle difference normalization
-        let diff = ((bearing - stableHeading + 540) % 360) - 180;
-
-        // Update UI
-        updateConsumerDirection(diff);
-        updateConsumerTagInfo(tag.name, d);
-      }
+      updateConsumerDirection(diff);
+      updateConsumerTagInfo(tag.name, d);
     }
   }
 });
+
 
 let smoothHeading = null;
 
@@ -494,6 +477,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
