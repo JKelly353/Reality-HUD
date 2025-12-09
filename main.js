@@ -42,12 +42,37 @@ window.addEventListener("DOMContentLoaded", () => {
   `;
 });
 // TEMPORARY TEST TAGS (Replace with real tags later)
-const testTags = [
-  { id: 1, name: "DESK", lat: 44.2601, lon: -72.5758 },
-  { id: 2, name: "CLOSET", lat: 44.2600, lon: -72.5750 },
-  { id: 3, name: "ROUTER", lat: 44.2605, lon: -72.5762 }
-];
+let testTags = [];
 
+// Generate fake tags near the user's actual position
+function generateNearbyTestTags() {
+  if (!window.currentLat || !window.currentLon) return;
+
+  const lat = window.currentLat;
+  const lon = window.currentLon;
+
+  // 0.00001 degrees ≈ 1.1 meters
+  testTags = [
+    {
+      id: 1,
+      name: "TEST OBJECT 1",
+      lat: lat + 0.00005,  // ~5m north
+      lon: lon + 0.00005   // ~5m east
+    },
+    {
+      id: 2,
+      name: "TEST OBJECT 2",
+      lat: lat - 0.00003,  // ~3m south
+      lon: lon - 0.00001   // ~1m west
+    },
+    {
+      id: 3,
+      name: "TEST OBJECT 3",
+      lat: lat + 0.00002,  // ~2m north
+      lon: lon - 0.00004   // ~4m west
+    }
+  ];
+}
 // ==============================
 // SPATIAL TAG MOCK SYSTEM
 // ==============================
@@ -469,6 +494,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
