@@ -135,6 +135,42 @@ function smoothCompassHeading(raw) {
   smoothHeading = alpha * raw + (1 - alpha) * smoothHeading;
   return smoothHeading;
 }
+function updateConsumerDirection(diff) {
+  const line = document.getElementById("direction-line");
+  if (!line) return;
+
+  // Clamp rotation for UX (avoids spinning 180 degrees)
+  const angle = Math.max(-90, Math.min(90, diff));
+
+  // Rotate the line
+  line.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+}
+// ================================
+// Tag Card Update System (Consumer Mode)
+// ================================
+
+function updateConsumerTagInfo(tagName, distance) {
+  const card = document.getElementById("consumer-tag-card");
+  const nameEl = document.getElementById("consumer-tag-name");
+  const distEl = document.getElementById("consumer-tag-distance");
+
+  if (!card || !nameEl || !distEl) return;
+
+  nameEl.textContent = tagName;
+  distEl.textContent = `${Math.round(distance)}m`;
+
+  // Fade in tag card
+  card.style.opacity = 1;
+  card.style.transform = "translateX(-50%)";
+}
+
+function hideConsumerTagInfo() {
+  const card = document.getElementById("consumer-tag-card");
+  if (card) {
+    card.style.opacity = 0;
+    card.style.transform = "translateX(-50%) translateY(10px)";
+  }
+}
 
 // ==============================
 // REAL GPS LOCATION MODULE
@@ -379,6 +415,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
