@@ -41,6 +41,13 @@ window.addEventListener("DOMContentLoaded", () => {
     </div>
   `;
 });
+// TEMPORARY TEST TAGS (Replace with real tags later)
+const testTags = [
+  { id: 1, name: "DESK", lat: 44.2601, lon: -72.5758 },
+  { id: 2, name: "CLOSET", lat: 44.2600, lon: -72.5750 },
+  { id: 3, name: "ROUTER", lat: 44.2605, lon: -72.5762 }
+];
+
 // ==============================
 // SPATIAL TAG MOCK SYSTEM
 // ==============================
@@ -261,4 +268,5 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-hud-mode").addEventListener("click", showHUDMode);
   document.getElementById("btn-camera-mode").addEventListener("click", showCameraMode);
 });
+
 
