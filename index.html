@@ -57,9 +57,24 @@
   <button id="btn-camera-mode">CAMERA MODE</button>
   </div>
 
-  <!-- CAMERA SCOPE MODE -->
+ <!-- CAMERA SCOPE MODE -->
 <div id="camera-mode" style="display:none;">
   <video id="camera-feed" autoplay playsinline></video>
+</div>
+
+<!-- CONSUMER MODE OVERLAY -->
+<div id="consumer-mode" style="display:none;">
+
+  <!-- Tag card (frosted glass UI) -->
+  <div id="consumer-tag-card">
+    <div id="consumer-tag-name">Object</div>
+    <div id="consumer-tag-distance">0m</div>
+  </div>
+
+  <!-- Direction Line -->
+  <div id="direction-line"></div>
+
+</div>
 
   <!-- Scope overlay -->
   <div id="camera-overlay">
@@ -80,6 +95,7 @@
   <script src="main.js"></script>
 </body>
 </html>
+
 
 
 
