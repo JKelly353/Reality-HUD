@@ -477,6 +477,10 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+// DEBUG: Show raw heading data from iPhone
+window.addEventListener("deviceorientation", (e) => {
+  console.log("alpha:", e.alpha, "webkit:", e.webkitCompassHeading);
+});
 
 
 
