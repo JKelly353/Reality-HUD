@@ -129,29 +129,34 @@ html, body {
   pointer-events: none;
 }
 
-/* Light Crosshair */
+/* Light Crosshair (perfect centered + shape) */
 #crosshair {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* centers entire group */
+  pointer-events: none;
+}
+
+.crosshair-line {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Vertical line */
+.crosshair-line.vertical {
+  width: 1px;
+  height: 80px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
-.crosshair-line {
-  background: rgba(255, 255, 255, 0.8);
-  position: absolute;
-}
-
-.crosshair-line.vertical {
-  width: 1px;
-  height: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
+/* Horizontal line */
 .crosshair-line.horizontal {
   height: 1px;
-  width: 60px;
+  width: 80px;
   top: 50%;
-  transform: translateY(-50%);
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
