@@ -237,3 +237,17 @@ html, body {
   transform: translateX(-50%) rotate(0deg);
   transition: transform 0.1s linear;
 }
+#debug-box {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.7);
+  color: #00ffea;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  z-index: 999999;
+  white-space: pre-line;
+  pointer-events: none;
+}
+
