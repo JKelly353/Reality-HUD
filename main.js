@@ -325,7 +325,7 @@ function updateCameraTags(userLat, userLon, userHeading) {
   const container = document.getElementById("camera-tags");
   container.innerHTML = ""; // clear old indicators
 
-  testTags.forEach(tag => {
+  testTags.forEach((tag, index) => {
     const d = distanceBetween(userLat, userLon, tag.lat, tag.lon);
     const bearing = bearingTo(userLat, userLon, tag.lat, tag.lon);
 
@@ -350,12 +350,13 @@ function updateCameraTags(userLat, userLon, userHeading) {
     const tagEl = document.createElement("div");
     tagEl.className = "camera-tag";
     tagEl.style.left = `${(screenWidth / 2) + x}px`;
-    tagEl.style.top = "65%"; // adjust as needed
+    tagEl.style.top = `${55 + (index * 6)}%`; // adjust as needed
     tagEl.textContent = `▶ ${tag.name} (${Math.round(d)}m)`;
 
     container.appendChild(tagEl);
   });
 }
+
 
 
 
