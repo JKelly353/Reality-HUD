@@ -269,6 +269,9 @@ function initGPS() {
     // 🔥 Store smoothed values globally
     window.currentLat = smooth.lat;
     window.currentLon = smooth.lon;
+    // Create nearby test tags once GPS is available
+if (testTags.length === 0) generateNearbyTestTags();
+
 
     // 🔥 Update HUD with smoothed values
     updateCoords(smooth.lat, smooth.lon);
@@ -494,6 +497,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
