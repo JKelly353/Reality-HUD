@@ -296,27 +296,7 @@ window.addEventListener("DOMContentLoaded", initGPS);
 
 function initCompass() {
   if (window.DeviceOrientationEvent) {
-    window.addEventListener("deviceorientation", (event) => {
-      let heading = null;
-
-      // iOS uses webkitCompassHeading
-      if (event.webkitCompassHeading) {
-        heading = event.webkitCompassHeading;
-      } else if (event.alpha !== null) {
-        // alpha = 0° facing north, 180° facing south
-        heading = 360 - event.alpha;
-      }
-
-      if (heading !== null) {
-    const stableHeading = smoothCompassHeading(heading);
-updateHeading(stableHeading);
-
-    // 🔥 NEW: Update directional arrows in Camera Mode
-    if (window.currentLat && window.currentLon) {
-      updateCameraTags(window.currentLat, window.currentLon, stableHeading);
-    }
-  }
-});
+  
   } else {
     console.warn("DeviceOrientationEvent not supported.");
   }
@@ -497,6 +477,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
