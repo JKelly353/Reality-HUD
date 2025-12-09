@@ -160,3 +160,18 @@ html, body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.camera-tag {
+  position: absolute;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  transform: translateX(-50%);
+  text-shadow: 0 0 6px black;
+}
+
+.camera-tag.behind {
+  top: 80%;
+  left: 50%;
+  color: red;
+}
