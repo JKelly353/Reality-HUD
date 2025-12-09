@@ -355,6 +355,24 @@ function updateCameraTags(userLat, userLon, userHeading) {
   });
 }
 
+let smoothLat = null;
+let smoothLon = null;
+
+function smoothGPS(lat, lon) {
+  if (smoothLat === null) {
+    // first time: initialize smoothing
+    smoothLat = lat;
+    smoothLon = lon;
+    return { lat, lon };
+  }
+
+  const alpha = 0.1; // smoothing factor
+  smoothLat = alpha * lat + (1 - alpha) * smoothLat;
+  smoothLon = alpha * lon + (1 - alpha) * smoothLon;
+
+  return { lat: smoothLat, lon: smoothLon };
+}
+
 
 
 
