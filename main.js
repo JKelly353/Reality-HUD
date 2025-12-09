@@ -118,15 +118,60 @@ function degreesToCardinal(deg) {
   if (deg >= 292.5 && deg < 337.5) return "NW ↖";
 }
 
-// Listen for compass heading
+// ======================================================
+// R-OS MASTER ORIENTATION HANDLER
+// Supports Consumer Mode + Tactical Mode
+// ======================================================
+
 window.addEventListener("deviceorientation", (event) => {
-  let heading = event.alpha; // 0–360 degrees
+  let heading = null;
+
+  // iOS compass
+  if (event.webkitCompassHeading) {
+    heading = event.webkitCompassHeading;
+  }
+  // Android + fallback
+  else if (event.alpha !== null) {
+    heading = 360 - event.alpha;
+  }
 
   if (heading !== null) {
-    const headingText = degreesToCardinal(heading);
-    document.getElementById("hud-heading-text").textContent = headingText;
+
+    // Smooth heading for stability
+    const stableHeading = smoothCompassHeading(heading);
+
+    // =============================
+    // Tactical Mode Updates (if active)
+    // =============================
+    updateHeading(stableHeading);
+
+    if (window.currentLat && window.currentLon) {
+      updateCameraTags(window.currentLat, window.currentLon, stableHeading);
+    }
+
+    // =============================
+    // Consumer Mode Updates
+    // =============================
+    if (document.getElementById("consumer-mode").style.display === "block") {
+
+      const tag = testTags[0];  // temporary target
+
+      if (tag && window.currentLat && window.currentLon) {
+
+        const d = distanceBetween(window.currentLat, window.currentLon, tag.lat, tag.lon);
+        const bearing = bearingTo(window.currentLat, window.currentLon, tag.lat, tag.lon);
+
+        // Final angle difference normalization
+        let diff = ((bearing - stableHeading + 540) % 360) - 180;
+
+        // Update UI
+        updateConsumerDirection(diff);
+        updateConsumerTagInfo(tag.name, d);
+      }
+    }
   }
 });
+
 let smoothHeading = null;
 
 function smoothCompassHeading(raw) {
@@ -415,6 +460,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
