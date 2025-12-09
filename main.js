@@ -498,6 +498,10 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+window.forceConsumerMode = () => {
+  document.getElementById("consumer-mode").style.display = "block";
+};
+
 
 
 
