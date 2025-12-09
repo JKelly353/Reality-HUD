@@ -53,10 +53,32 @@
  <div id="hud-controls">
     <button id="btn-drop-tag">DROP TAG</button>
     <button id="btn-request-motion">ENABLE MOTION</button>
+   <button id="btn-hud-mode">HUD MODE</button>
+  <button id="btn-camera-mode">CAMERA MODE</button>
   </div>
+
+  <!-- CAMERA SCOPE MODE -->
+<div id="camera-mode" style="display:none;">
+  <video id="camera-feed" autoplay playsinline></video>
+
+  <!-- Scope overlay -->
+  <div id="camera-overlay">
+
+    <!-- Light Crosshair -->
+    <div id="crosshair">
+      <div class="crosshair-line vertical"></div>
+      <div class="crosshair-line horizontal"></div>
+    </div>
+
+    <!-- Dynamic tag indicators will appear here -->
+    <div id="camera-tags"></div>
+
+  </div>
+</div>
 
   <!-- Link to our JS -->
   <script src="main.js"></script>
 </body>
 </html>
+
 
