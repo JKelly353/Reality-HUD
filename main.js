@@ -269,4 +269,41 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-camera-mode").addEventListener("click", showCameraMode);
 });
 
+function toRad(x) {
+  return x * Math.PI / 180;
+}
+
+// Haversine distance in meters
+function distanceBetween(lat1, lon1, lat2, lon2) {
+  const R = 6371e3; // meters
+  const φ1 = toRad(lat1);
+  const φ2 = toRad(lat2);
+  const Δφ = toRad(lat2 - lat1);
+  const Δλ = toRad(lon2 - lon1);
+
+  const a = Math.sin(Δφ/2)**2 +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2)**2;
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return R * c;
+}
+
+// Bearing from you → tag, in degrees
+function bearingTo(lat1, lon1, lat2, lon2) {
+  const φ1 = toRad(lat1);
+  const φ2 = toRad(lat2);
+  const λ1 = toRad(lon1);
+  const λ2 = toRad(lon2);
+
+  const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
+  const x = Math.cos(φ1)*Math.sin(φ2) -
+            Math.sin(φ1)*Math.cos(φ2)*Math.cos(λ2 - λ1);
+  
+  let brng = Math.atan2(y, x) * 180 / Math.PI;
+  return (brng + 360) % 360;
+}
+
+
 
