@@ -157,3 +157,73 @@ function initGPS() {
 // Start GPS on page load
 window.addEventListener("DOMContentLoaded", initGPS);
 
+// ==============================
+// COMPASS / MOTION PERMISSION + LIVE HEADING
+// ==============================
+
+function initCompass() {
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", (event) => {
+      let heading = null;
+
+      // iOS uses webkitCompassHeading
+      if (event.webkitCompassHeading) {
+        heading = event.webkitCompassHeading;
+      } else if (event.alpha !== null) {
+        // alpha = 0° facing north, 180° facing south
+        heading = 360 - event.alpha;
+      }
+
+      if (heading !== null) {
+        updateHeading(heading);
+      }
+    });
+  } else {
+    console.warn("DeviceOrientationEvent not supported.");
+  }
+}
+
+function updateHeading(deg) {
+  const headingTextEl = document.getElementById("hud-heading-text");
+  headingTextEl.textContent = degreesToCardinal(deg) || "N ↑";
+}
+
+// Same cardinal conversion function you added earlier:
+function degreesToCardinal(deg) {
+  if (deg >= 337.5 || deg < 22.5) return "N ↑";
+  if (deg >= 22.5 && deg < 67.5) return "NE ↗";
+  if (deg >= 67.5 && deg < 112.5) return "E →";
+  if (deg >= 112.5 && deg < 157.5) return "SE ↘";
+  if (deg >= 157.5 && deg < 202.5) return "S ↓";
+  if (deg >= 202.5 && deg < 247.5) return "SW ↙";
+  if (deg >= 247.5 && deg < 292.5) return "W ←";
+  if (deg >= 292.5 && deg < 337.5) return "NW ↖";
+}
+
+// Must be triggered by user interaction on iOS
+function requestMotionAccess() {
+  if (typeof DeviceMotionEvent.requestPermission === "function") {
+    DeviceMotionEvent.requestPermission()
+      .then((response) => {
+        if (response === "granted") {
+          console.log("Motion access granted.");
+          initCompass();
+        } else {
+          alert("Motion access denied.");
+        }
+      })
+      .catch(console.error);
+  } else {
+    // Android & desktops don't require permission
+    initCompass();
+  }
+}
+
+// Hook up the button
+window.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("btn-request-motion");
+  if (btn) {
+    btn.addEventListener("click", requestMotionAccess);
+  }
+});
+
