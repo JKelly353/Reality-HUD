@@ -305,5 +305,41 @@ function bearingTo(lat1, lon1, lat2, lon2) {
   return (brng + 360) % 360;
 }
 
+function updateCameraTags(userLat, userLon, userHeading) {
+  const container = document.getElementById("camera-tags");
+  container.innerHTML = ""; // clear old indicators
+
+  testTags.forEach(tag => {
+    const d = distanceBetween(userLat, userLon, tag.lat, tag.lon);
+    const bearing = bearingTo(userLat, userLon, tag.lat, tag.lon);
+
+    // Angle difference
+    let diff = bearing - userHeading;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    // Behind indicator
+    if (Math.abs(diff) > 90) {
+      const el = document.createElement("div");
+      el.className = "camera-tag behind";
+      el.textContent = `◀ ${tag.name} (${Math.round(d)}m)`;
+      container.appendChild(el);
+      return;
+    }
+
+    // Position arrow horizontally
+    const screenWidth = window.innerWidth;
+    const x = (diff / 90) * (screenWidth / 2); // -90° left, +90° right
+
+    const tagEl = document.createElement("div");
+    tagEl.className = "camera-tag";
+    tagEl.style.left = `${(screenWidth / 2) + x}px`;
+    tagEl.style.top = "65%"; // adjust as needed
+    tagEl.textContent = `▶ ${tag.name} (${Math.round(d)}m)`;
+
+    container.appendChild(tagEl);
+  });
+}
+
 
 
