@@ -330,9 +330,7 @@ function updateCameraTags(userLat, userLon, userHeading) {
     const bearing = bearingTo(userLat, userLon, tag.lat, tag.lon);
 
     // Angle difference
-    let diff = bearing - userHeading;
-    if (diff > 180) diff -= 360;
-    if (diff < -180) diff += 360;
+   let diff = ((bearing - userHeading + 540) % 360) - 180;
 
     // Behind indicator
     if (Math.abs(diff) > 90) {
@@ -356,6 +354,7 @@ function updateCameraTags(userLat, userLon, userHeading) {
     container.appendChild(tagEl);
   });
 }
+
 
 
 
