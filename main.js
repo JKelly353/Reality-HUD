@@ -329,20 +329,18 @@ function degreesToCardinal(deg) {
 
 // Must be triggered by user interaction on iOS
 function requestMotionAccess() {
-  if (typeof DeviceMotionEvent.requestPermission === "function") {
-    DeviceMotionEvent.requestPermission()
+  if (typeof DeviceOrientationEvent.requestPermission === "function") {
+    DeviceOrientationEvent.requestPermission()
       .then((response) => {
         if (response === "granted") {
-          console.log("Motion access granted.");
-          initCompass();
+          console.log("Motion access granted");
         } else {
           alert("Motion access denied.");
         }
       })
       .catch(console.error);
   } else {
-    // Android & desktops don't require permission
-    initCompass();
+    console.log("Motion access not required on this device.");
   }
 }
 
@@ -489,6 +487,7 @@ function smoothGPS(lat, lon) {
 
   return { lat: smoothLat, lon: smoothLon };
 }
+
 
 
 
