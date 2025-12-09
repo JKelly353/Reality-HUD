@@ -151,14 +151,19 @@ function degreesToCardinal(deg) {
 window.addEventListener("deviceorientation", (event) => {
   let heading = null;
 
-  // Highest-priority: TRUE COMPASS on iPhone (iPhone 16 Pro supports this)
-  if (typeof event.webkitCompassHeading === "number") {
+ // Best-case: TRUE compass from iPhone
+if (typeof event.webkitCompassHeading === "number") {
     heading = event.webkitCompassHeading;
-  }
-  else {
-    // No true compass available yet — ignore this frame
+}
+// Fallback: alpha (still useful, fused with gyro)
+else if (typeof event.alpha === "number") {
+    heading = 360 - event.alpha;
+}
+// If no heading at all, skip this frame
+else {
     return;
-  }
+}
+
 
   // Smooth & update heading
   const stableHeading = smoothCompassHeading(heading);
@@ -488,6 +493,7 @@ window.addEventListener("deviceorientation", (e) => {
     "webkit: " + e.webkitCompassHeading + "\n" +
     "absolute: " + e.absolute;
 });
+
 
 
 
