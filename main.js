@@ -481,6 +481,14 @@ function smoothGPS(lat, lon) {
 window.addEventListener("deviceorientation", (e) => {
   console.log("alpha:", e.alpha, "webkit:", e.webkitCompassHeading);
 });
+window.addEventListener("deviceorientation", (e) => {
+  const dbg = document.getElementById("debug-box");
+  dbg.textContent =
+    "alpha: " + e.alpha + "\n" +
+    "webkit: " + e.webkitCompassHeading + "\n" +
+    "absolute: " + e.absolute;
+});
+
 
 
 
