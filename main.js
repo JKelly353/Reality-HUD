@@ -127,6 +127,14 @@ window.addEventListener("deviceorientation", (event) => {
     document.getElementById("hud-heading-text").textContent = headingText;
   }
 });
+let smoothHeading = null;
+
+function smoothCompassHeading(raw) {
+  if (smoothHeading === null) smoothHeading = raw;
+  const alpha = 0.15; // smoothing factor
+  smoothHeading = alpha * raw + (1 - alpha) * smoothHeading;
+  return smoothHeading;
+}
 
 // ==============================
 // REAL GPS LOCATION MODULE
@@ -184,11 +192,12 @@ function initCompass() {
       }
 
       if (heading !== null) {
-    updateHeading(heading);
+    const stableHeading = smoothCompassHeading(heading);
+updateHeading(stableHeading);
 
     // 🔥 NEW: Update directional arrows in Camera Mode
     if (window.currentLat && window.currentLon) {
-      updateCameraTags(window.currentLat, window.currentLon, heading);
+      updateCameraTags(window.currentLat, window.currentLon, stableHeading);
     }
   }
 });
@@ -347,6 +356,7 @@ function updateCameraTags(userLat, userLon, userHeading) {
     container.appendChild(tagEl);
   });
 }
+
 
 
 
