@@ -144,46 +144,63 @@ function degreesToCardinal(deg) {
 }
 
 // ======================================================
-// R-OS MASTER ORIENTATION HANDLER
-// Supports Consumer Mode + Tactical Mode
+// R-OS MASTER ORIENTATION HANDLER (with on-screen debug)
 // ======================================================
 
 window.addEventListener("deviceorientation", (event) => {
+
+  const dbg = document.getElementById("debug-box");
+
+  // 1️⃣ Handler firing
+  dbg.textContent = "MASTER HANDLER FIRED\n";
+
   let heading = null;
 
- // Best-case: TRUE compass from iPhone
-if (typeof event.webkitCompassHeading === "number") {
+  // Try true compass first
+  if (typeof event.webkitCompassHeading === "number") {
     heading = event.webkitCompassHeading;
-}
-// Fallback: alpha (still useful, fused with gyro)
-else if (typeof event.alpha === "number") {
+  }
+  // Fallback to alpha
+  else if (typeof event.alpha === "number") {
     heading = 360 - event.alpha;
-}
-// If no heading at all, skip this frame
-else {
+  }
+  // No heading at all
+  else {
+    dbg.textContent += "NO HEADING AVAILABLE\n";
     return;
-}
+  }
 
+  // 2️⃣ Raw heading
+  dbg.textContent += "Raw heading chosen: " + heading + "\n";
 
-  // Smooth & update heading
+  // Smooth heading
   const stableHeading = smoothCompassHeading(heading);
 
-  updateHeading(stableHeading);
+  // 3️⃣ Stable heading
+  dbg.textContent += "Stable heading: " + stableHeading + "\n";
 
-  // Tactical updates
+  // Tactical mode (camera arrows)
   if (window.currentLat && window.currentLon) {
     updateCameraTags(window.currentLat, window.currentLon, stableHeading);
   }
 
-  // Consumer Mode
-  if (document.getElementById("consumer-mode").style.display === "block") {
+  // Consumer Mode logic
+  const consumerModeActive = (document.getElementById("consumer-mode").style.display === "block");
 
+  // 4️⃣ Consumer mode state
+  dbg.textContent += "Consumer Mode active: " + consumerModeActive + "\n";
+
+  if (consumerModeActive) {
     const tag = testTags[0];
+
     if (tag && window.currentLat && window.currentLon) {
       const d = distanceBetween(window.currentLat, window.currentLon, tag.lat, tag.lon);
       const bearing = bearingTo(window.currentLat, window.currentLon, tag.lat, tag.lon);
 
       let diff = ((bearing - stableHeading + 540) % 360) - 180;
+
+      // 5️⃣ Angle diff
+      dbg.textContent += "Diff (bearing difference): " + diff + "\n";
 
       updateConsumerDirection(diff);
       updateConsumerTagInfo(tag.name, d);
@@ -191,7 +208,7 @@ else {
   }
 });
 
-
+      
 let smoothHeading = null;
 
 function smoothCompassHeading(raw) {
@@ -493,6 +510,7 @@ window.addEventListener("deviceorientation", (e) => {
     "webkit: " + e.webkitCompassHeading + "\n" +
     "absolute: " + e.absolute;
 });
+
 
 
 
