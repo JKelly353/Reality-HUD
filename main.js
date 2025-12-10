@@ -669,7 +669,9 @@ function initButtons() {
   if (hudBtn) hudBtn.addEventListener("click", showHUDMode);
   if (camBtn) camBtn.addEventListener("click", showCameraMode);
 
-  // AR OVERLAY toggle button (only affects Camera mode)
+  // ==============================
+  // AR OVERLAY toggle button
+  // ==============================
   const toggleBtn = document.createElement("button");
   toggleBtn.id = "consumer-toggle";
   toggleBtn.textContent = "AR OVERLAY";
@@ -677,9 +679,45 @@ function initButtons() {
     if (currentMode !== "CAMERA") return;
     toggleConsumerOverlay();
   });
-
   document.body.appendChild(toggleBtn);
+
+  // ==============================
+  // TAG SHEET BUTTONS
+  // ==============================
+  const saveBtn = document.getElementById("tag-save-btn");
+  const cancelBtn = document.getElementById("tag-cancel-btn");
+
+  if (saveBtn) saveBtn.addEventListener("click", saveTagName);
+  if (cancelBtn) cancelBtn.addEventListener("click", cancelTagCreation);
+
+  // ==============================
+  // + ADD TAG BUTTON (Camera mode only)
+  // ==============================
+  const addBtn = document.createElement("button");
+  addBtn.id = "add-tag-btn";
+  addBtn.textContent = "+ ADD TAG";
+
+  addBtn.style.position = "fixed";
+  addBtn.style.bottom = "22px";
+  addBtn.style.left = "22px";
+  addBtn.style.zIndex = "20000";
+  addBtn.style.padding = "10px 16px";
+  addBtn.style.borderRadius = "12px";
+  addBtn.style.border = "1px solid rgba(255,255,255,0.4)";
+  addBtn.style.background = "rgba(255,255,255,0.2)";
+  addBtn.style.color = "white";
+  addBtn.style.fontSize = "16px";
+  addBtn.style.backdropFilter = "blur(8px)";
+
+  addBtn.addEventListener("click", () => {
+    if (currentMode === "CAMERA") {
+      createTagFromCrosshair();
+    }
+  });
+
+  document.body.appendChild(addBtn);
 }
+
 // ==============================
 // TAG CREATION (CROSSHAIR ANCHOR)
 // ==============================
@@ -756,6 +794,7 @@ window.addEventListener("DOMContentLoaded", () => {
   updateModeDebug();
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
 });
+
 
 
 
