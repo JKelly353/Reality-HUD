@@ -92,7 +92,26 @@ MODE: ?
   <button id="btn-hud-mode">HUD MODE</button>
   <button id="btn-camera-mode">CAMERA MODE</button>
 </div>
+<!-- TAG CREATION BOTTOM SHEET -->
+<div id="tag-sheet-backdrop"></div>
 
+<div id="tag-sheet">
+  <div id="tag-sheet-header">Create New Tag</div>
+
+  <input 
+    id="tag-name-input" 
+    type="text" 
+    placeholder="Enter tag name"
+    autocomplete="off"
+  />
+
+  <div id="tag-sheet-buttons">
+    <button id="tag-cancel-btn">Cancel</button>
+    <button id="tag-save-btn">Save</button>
+  </div>
+</div>
+  
 <script src="main.js?v=10"></script>
 </body>
 </html>
+
