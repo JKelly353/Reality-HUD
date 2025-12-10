@@ -410,6 +410,15 @@ window.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("btn-request-motion");
   if (btn) btn.addEventListener("click", requestMotionAccess);
 });
+setInterval(() => {
+  const cm = document.getElementById("consumer-mode");
+  const box = document.getElementById("mode-debug");
+
+  if (cm && box) {
+    box.textContent = "MODE: " + cm.style.display;
+  }
+}, 300);
+
 
 
 function toRad(x) {
@@ -506,6 +515,7 @@ function smoothGPS(lat, lon) {
 window.forceConsumerMode = () => {
   document.getElementById("consumer-mode").style.display = "block";
 };
+
 
 
 
