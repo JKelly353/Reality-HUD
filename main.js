@@ -782,6 +782,97 @@ function cancelTagCreation() {
   if (input) input.value = "";
   closeTagSheet();
 }
+// ==============================
+// TAG CREATION (CROSSHAIR ANCHOR)
+// ==============================
+
+// This function is called when user taps + ADD TAG
+function createTagFromCrosshair() {
+  if (window.currentLat == null || window.currentLon == null) {
+    alert("GPS still initializing...");
+    return;
+  }
+
+  if (window.displayHeading == null) {
+    alert("Compass not ready yet.");
+    return;
+  }
+
+  // Create the tag object (user will name it next)
+  const newTag = {
+    id: Date.now(),
+    name: "",
+    lat: window.currentLat,
+    lon: window.currentLon,
+    heading: window.displayHeading,
+  };
+
+  // Store temporarily before user enters a name
+  window._pendingTag = newTag;
+
+  // Open bottom sheet
+  openTagSheet();
+}
+
+// Save button — finalize the tag
+function saveTagName() {
+  const input = document.getElementById("tag-name-input");
+  if (!input) return;
+
+  const name = input.value.trim();
+  if (!name) {
+    alert("Please enter a name.");
+    return;
+  }
+
+  if (!window._pendingTag) {
+    alert("No tag pending.");
+    return;
+  }
+
+  // Finalize the tag
+  window._pendingTag.name = name;
+
+  // Load existing storage
+  let stored = JSON.parse(localStorage.getItem("ros_tags") || "[]");
+
+  // Add new tag
+  stored.push(window._pendingTag);
+
+  // Save permanently
+  localStorage.setItem("ros_tags", JSON.stringify(stored));
+
+  // Clear pending
+  window._pendingTag = null;
+
+  // Reset UI
+  input.value = "";
+  closeTagSheet();
+
+  // Reload tags into AR system
+  loadSavedTags();
+}
+
+// Cancel button — discard pending tag
+function cancelTagCreation() {
+  window._pendingTag = null;
+  const input = document.getElementById("tag-name-input");
+  if (input) input.value = "";
+  closeTagSheet();
+}
+
+// Load saved tags from localStorage
+function loadSavedTags() {
+  let saved = JSON.parse(localStorage.getItem("ros_tags") || "[]");
+
+  if (saved.length > 0) {
+    testTags = saved;
+    activeTag = saved[0]; // default to first tag for consumer mode
+  } else {
+    testTags = [];
+    activeTag = null;
+  }
+}
 
 // ==============================
 // DOM READY
@@ -794,6 +885,7 @@ window.addEventListener("DOMContentLoaded", () => {
   updateModeDebug();
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
 });
+
 
 
 
