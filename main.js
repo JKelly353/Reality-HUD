@@ -1,5 +1,5 @@
 // main.js
-// Clean R-OS baseline: HUD + Camera + Consumer Overlay (toggle) + Adaptive Debug
+// R-OS: HUD + Camera + Consumer Overlay + Soft-Stabilized AR Heading
 
 console.log("R-OS main.js loaded");
 
@@ -10,13 +10,17 @@ console.log("R-OS main.js loaded");
 let currentLat = null;
 let currentLon = null;
 
-let smoothHeading = null;
+let smoothHeading = null;      // smoothed sensor heading
+let displayHeading = null;     // heading actually used for UI (soft eased)
+let lastRawHeading = null;
+let lastHeadingTime = null;
+
 let smoothLat = null;
 let smoothLon = null;
 
 let testTags = [];          // auto-generated near user
-let activeTag = null;       // tag we are "tracking" in consumer mode
-let isConsumerActive = false; // overlay toggle state
+let activeTag = null;       // tag we are tracking in consumer mode
+let isConsumerActive = false;
 let currentMode = "HUD";    // "HUD" | "CAMERA"
 
 // ==============================
@@ -73,21 +77,70 @@ function degreesToCardinal(deg) {
   if (deg >= 292.5 && deg < 337.5) return "NW ↖";
 }
 
-// Smooth compass heading
+// ==============================
+// SMOOTHING HELPERS
+// ==============================
+
+// Smooth the raw heading from sensors
 function smoothCompassHeading(rawDeg) {
   if (smoothHeading === null) {
     smoothHeading = rawDeg;
     return rawDeg;
   }
 
-  // Reject wild jumps
-  if (Math.abs(rawDeg - smoothHeading) > 50) {
+  // Time-based drift control
+  const now = performance.now();
+  const dt = lastHeadingTime ? (now - lastHeadingTime) : 0;
+  lastHeadingTime = now;
+
+  // Reject insane jumps (>70° in one frame)
+  const diff = angleDiff(rawDeg, smoothHeading);
+  if (Math.abs(diff) > 70) {
+    return smoothHeading; // ignore spike
+  }
+
+  // If we haven't moved much in angle and time is short, freeze to reduce jitter
+  if (Math.abs(diff) < 0.8 && dt < 150) {
     return smoothHeading;
   }
 
-  const alpha = 0.12; // smoothing factor
-  smoothHeading = alpha * rawDeg + (1 - alpha) * smoothHeading;
+  const alpha = 0.16; // smoothing factor (balanced)
+  smoothHeading = normalizeAngle(smoothHeading + alpha * diff);
   return smoothHeading;
+}
+
+// Soft-predictive easing from smoothed heading → displayed heading
+function updateDisplayHeading(targetDeg) {
+  if (displayHeading === null) {
+    displayHeading = targetDeg;
+    return targetDeg;
+  }
+
+  const diff = angleDiff(targetDeg, displayHeading);
+
+  // If the target is very close, just snap to avoid micro-wiggle
+  if (Math.abs(diff) < 0.4) {
+    displayHeading = targetDeg;
+    return displayHeading;
+  }
+
+  // Soft easing (Option 1: soft predictive smoothing)
+  const easeFactor = 0.22; // higher = faster response, lower = smoother
+  displayHeading = normalizeAngle(displayHeading + diff * easeFactor);
+
+  return displayHeading;
+}
+
+// Angle helpers
+function normalizeAngle(deg) {
+  return ((deg % 360) + 360) % 360;
+}
+
+function angleDiff(target, current) {
+  let diff = normalizeAngle(target) - normalizeAngle(current);
+  if (diff > 180) diff -= 360;
+  if (diff < -180) diff += 360;
+  return diff;
 }
 
 // Smooth GPS
@@ -163,7 +216,6 @@ function setDebug(text) {
   const dbg = document.getElementById("debug-box");
   if (!dbg) return;
 
-  // Only show live debug in HUD mode
   if (currentMode === "HUD") {
     dbg.style.display = "block";
     dbg.textContent = text;
@@ -172,7 +224,6 @@ function setDebug(text) {
   }
 }
 
-// Small mode ticker
 function updateModeDebug() {
   const box = document.getElementById("mode-debug");
   if (!box) return;
@@ -305,7 +356,7 @@ function initGPS() {
 }
 
 // ==============================
-// COMPASS / ORIENTATION
+// COMPASS / ORIENTATION (STABILIZED)
 // ==============================
 
 function updateHeadingDisplay(deg) {
@@ -318,7 +369,7 @@ function updateConsumerDirection(diffDeg) {
   const line = document.getElementById("direction-line");
   if (!line) return;
 
-  // Full 360° rotation so it's never "stuck"
+  // Full 360° rotation; we let smoothing handle feel
   line.style.transform = `translateX(-50%) rotate(${diffDeg}deg)`;
 }
 
@@ -350,9 +401,9 @@ function updateCameraTags(userLat, userLon, userHeading) {
     const d = distanceBetween(userLat, userLon, tag.lat, tag.lon);
     const bearing = bearingTo(userLat, userLon, tag.lat, tag.lon);
 
-    let diff = ((bearing - userHeading + 540) % 360) - 180;
+    let diff = angleDiff(bearing, userHeading);
 
-    // If behind, show simple indicator
+    // If behind, show alternate marker
     if (Math.abs(diff) > 90) {
       const el = document.createElement("div");
       el.className = "camera-tag behind";
@@ -382,6 +433,7 @@ function initOrientation() {
   window.addEventListener("deviceorientation", (event) => {
     let heading = null;
 
+    // Prefer true compass on iOS
     if (typeof event.webkitCompassHeading === "number") {
       heading = event.webkitCompassHeading;
     } else if (typeof event.alpha === "number") {
@@ -390,21 +442,30 @@ function initOrientation() {
       return;
     }
 
+    heading = normalizeAngle(heading);
+    lastRawHeading = heading;
+
+    // 1) Smooth sensor heading
     const stableHeading = smoothCompassHeading(heading);
 
-    // HUD heading
-    updateHeadingDisplay(stableHeading);
+    // 2) Soft easing for final display
+    const uiHeading = updateDisplayHeading(stableHeading);
 
-    // Debug in HUD mode only
+    // HUD heading (cardinal)
+    updateHeadingDisplay(uiHeading);
+
+    // Debug (HUD only)
     setDebug(
-      `Heading: ${stableHeading.toFixed(1)}°\n` +
+      `Raw: ${heading.toFixed(1)}°\n` +
+      `Stable: ${stableHeading.toFixed(1)}°\n` +
+      `Display: ${uiHeading.toFixed(1)}°\n` +
       `Lat: ${currentLat?.toFixed?.(5) ?? "--"}\n` +
       `Lon: ${currentLon?.toFixed?.(5) ?? "--"}`
     );
 
     // Camera / AR UI
     if (currentLat != null && currentLon != null) {
-      updateCameraTags(currentLat, currentLon, stableHeading);
+      updateCameraTags(currentLat, currentLon, uiHeading);
 
       if (currentMode === "CAMERA" && isConsumerActive && activeTag) {
         const d = distanceBetween(
@@ -419,7 +480,7 @@ function initOrientation() {
           activeTag.lat,
           activeTag.lon
         );
-        let diff = ((bearing - stableHeading + 540) % 360) - 180;
+        let diff = angleDiff(bearing, uiHeading);
 
         updateConsumerDirection(diff);
         updateConsumerTagInfo(activeTag.name, d);
@@ -572,23 +633,12 @@ function initButtons() {
   if (hudBtn) hudBtn.addEventListener("click", showHUDMode);
   if (camBtn) camBtn.addEventListener("click", showCameraMode);
 
-  // Create a small toggle button overlay for Consumer Mode in Camera
+  // AR OVERLAY toggle button (only affects Camera mode)
   const toggleBtn = document.createElement("button");
   toggleBtn.id = "consumer-toggle";
   toggleBtn.textContent = "AR OVERLAY";
-  toggleBtn.style.position = "fixed";
-  toggleBtn.style.bottom = "20px";
-  toggleBtn.style.right = "20px";
-  toggleBtn.style.zIndex = "99999";
-  toggleBtn.style.padding = "8px 12px";
-  toggleBtn.style.background = "rgba(0,0,0,0.7)";
-  toggleBtn.style.color = "#00ffea";
-  toggleBtn.style.border = "1px solid #00ffea";
-  toggleBtn.style.borderRadius = "8px";
-  toggleBtn.style.fontSize = "12px";
-
   toggleBtn.addEventListener("click", () => {
-    if (currentMode !== "CAMERA") return; // only works in camera mode
+    if (currentMode !== "CAMERA") return;
     toggleConsumerOverlay();
   });
 
