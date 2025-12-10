@@ -373,15 +373,17 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // =========================
-// MODE SWITCHING
+// MODE SWITCHING (SAFE VERSION)
 // =========================
 
 function showHUDMode() {
+  console.log("SHOW HUD MODE FIRED");
+
   document.getElementById("hud-root").style.display = "block";
   document.getElementById("camera-mode").style.display = "none";
 
-  const consumer = document.getElementById("consumer-mode");
-  if (consumer) consumer.style.display = "none";
+  const cm = document.getElementById("consumer-mode");
+  if (cm) cm.style.display = "none";
 }
 
 function showCameraMode() {
@@ -390,39 +392,25 @@ function showCameraMode() {
   document.getElementById("hud-root").style.display = "none";
   document.getElementById("camera-mode").style.display = "block";
 
-  const el = document.getElementById("consumer-mode");
-  console.log("consumer-mode element:", el);
-
-  // 🔥 FORCE this ON
-  document.getElementById("consumer-mode").style.display = "block";
-
-  console.log("consumer-mode final display =", document.getElementById("consumer-mode").style.display);
+  const cm = document.getElementById("consumer-mode");
+  if (cm) {
+    cm.style.display = "block";
+    console.log("consumer-mode set to BLOCK");
+  } else {
+    console.log("consumer-mode NOT FOUND!");
+  }
 
   startCamera();
 }
 
-
-function startCamera() {
-  const video = document.getElementById("camera-feed");
-
-  navigator.mediaDevices.getUserMedia({
-    video: { facingMode: "environment" }
-  })
-  .then(stream => {
-    video.srcObject = stream;
-  })
-  .catch(err => {
-    console.error("Camera error:", err);
-    alert("Unable to access camera.");
-  });
-}
-
 window.addEventListener("DOMContentLoaded", () => {
+  console.log("Binding buttons...");
   document.getElementById("btn-hud-mode").addEventListener("click", showHUDMode);
-  document.getElementById("btn-camera-mode").addEventListener("click", () => {
-  console.log("CAMERA MODE BUTTON CLICKED");
-  showCameraMode();
+  document.getElementById("btn-camera-mode").addEventListener("click", showCameraMode);
+  const btn = document.getElementById("btn-request-motion");
+  if (btn) btn.addEventListener("click", requestMotionAccess);
 });
+
 
 function toRad(x) {
   return x * Math.PI / 180;
@@ -518,6 +506,7 @@ function smoothGPS(lat, lon) {
 window.forceConsumerMode = () => {
   document.getElementById("consumer-mode").style.display = "block";
 };
+
 
 
 
