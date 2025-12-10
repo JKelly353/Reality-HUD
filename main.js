@@ -4,6 +4,43 @@
 console.log("R-OS main.js loaded");
 
 // ==============================
+// TAG SHEET UI CONTROLS
+// ==============================
+
+function openTagSheet() {
+  const backdrop = document.getElementById("tag-sheet-backdrop");
+  const sheet = document.getElementById("tag-sheet");
+  const input = document.getElementById("tag-name-input");
+
+  if (!backdrop || !sheet || !input) return;
+
+  // Show backdrop
+  backdrop.style.pointerEvents = "auto";
+  backdrop.style.opacity = "1";
+
+  // Slide sheet up
+  sheet.style.bottom = "0px";
+
+  // Auto-focus input after animation delay (iOS-safe)
+  setTimeout(() => {
+    input.focus();
+  }, 250);
+}
+
+function closeTagSheet() {
+  const backdrop = document.getElementById("tag-sheet-backdrop");
+  const sheet = document.getElementById("tag-sheet");
+  const input = document.getElementById("tag-name-input");
+
+  if (!backdrop || !sheet || !input) return;
+
+  input.blur(); // close keyboard
+  backdrop.style.opacity = "0";
+  backdrop.style.pointerEvents = "none";
+  sheet.style.bottom = "-260px";
+}
+
+// ==============================
 // GLOBAL STATE
 // ==============================
 
@@ -656,3 +693,4 @@ window.addEventListener("DOMContentLoaded", () => {
   updateModeDebug();
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
 });
+
