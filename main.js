@@ -185,7 +185,15 @@ window.addEventListener("deviceorientation", (event) => {
   }
 
   // Consumer Mode logic
-  const consumerModeActive = (document.getElementById("consumer-mode").style.display === "block");
+  const cm = document.getElementById("consumer-mode");
+let consumerModeActive = false;
+
+if (cm) {
+  console.log("consumer-mode EXISTS with style.display =", cm.style.display);
+  consumerModeActive = (cm.style.display === "block");
+} else {
+  console.log("consumer-mode DOES NOT EXIST IN DOM!");
+}
 
   // 4️⃣ Consumer mode state
   dbg.textContent += "Consumer Mode active: " + consumerModeActive + "\n";
@@ -510,6 +518,7 @@ function smoothGPS(lat, lon) {
 window.forceConsumerMode = () => {
   document.getElementById("consumer-mode").style.display = "block";
 };
+
 
 
 
