@@ -4,16 +4,19 @@
   <meta charset="UTF-8" />
   <title>Reality HUD</title>
 
-  <!-- Make it fill the phone screen nicely -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Link to our CSS -->
   <link rel="stylesheet" href="styles.css" />
 </head>
-  <div id="mode-debug"
+
+<body>
+
+<!-- DEBUG OVERLAYS -->
+<div id="debug-box">DEBUG READY</div>
+<div id="mode-debug"
 style="
   position:fixed;
-  bottom:10px;
+  bottom:40px;
   left:10px;
   padding:8px 12px;
   background:red;
@@ -24,62 +27,47 @@ style="
 MODE: ?
 </div>
 
-<body>
-  <!-- HUD ROOT -->
-  <div id="hud-root">
-   <div id="debug-box">DEBUG READY</div>
-    <!-- Panel 1: Orientation + Zone -->
-    <section id="hud-panel-orientation" class="hud-panel">
-      <div class="hud-heading">ORIENTATION</div>
-      <div id="hud-heading-text">N ↑</div>
-      <div id="hud-zone-text">ZONE: UNKNOWN</div>
-      <div id="hud-status-text">STATUS: INITIALIZING</div>
-      <div id="hud-tags-count">TAGS NEARBY: 0</div>
-      <div id="hud-coords-text">COORDS: --, --</div>
-    </section>
+<!-- HUD ROOT -->
+<div id="hud-root">
+  <section id="hud-panel-orientation" class="hud-panel">
+    <div class="hud-heading">ORIENTATION</div>
+    <div id="hud-heading-text">N ↑</div>
+    <div id="hud-zone-text">ZONE: UNKNOWN</div>
+    <div id="hud-status-text">STATUS: INITIALIZING</div>
+    <div id="hud-tags-count">TAGS NEARBY: 0</div>
+    <div id="hud-coords-text">COORDS: --, --</div>
+  </section>
 
-    <!-- Panel 2: Spatial Tag Stream -->
-    <section id="hud-panel-tags" class="hud-panel">
-      <div class="hud-heading">TAG FEED</div>
-      <div id="hud-tags-feed" class="hud-feed">
-        <div class="hud-feed-item hud-muted">No tags detected.</div>
+  <section id="hud-panel-tags" class="hud-panel">
+    <div class="hud-heading">TAG FEED</div>
+    <div id="hud-tags-feed" class="hud-feed">
+      <div class="hud-feed-item hud-muted">No tags detected.</div>
+    </div>
+  </section>
+
+  <section id="hud-panel-intel" class="hud-panel">
+    <div class="hud-heading">ZONE / OBJECT INTEL</div>
+    <div id="hud-intel-body" class="hud-feed">
+      <div class="hud-feed-item hud-muted">No intel yet.</div>
+    </div>
+  </section>
+
+  <section id="hud-panel-ai" class="hud-panel">
+    <div class="hud-heading">AI ANALYSIS</div>
+    <div id="hud-ai-body" class="hud-feed">
+      <div class="hud-feed-item hud-muted">
+        AI link not initialized.
       </div>
-    </section>
+    </div>
+  </section>
+</div>
 
-    <!-- Panel 3: Object / Zone Intel -->
-    <section id="hud-panel-intel" class="hud-panel">
-      <div class="hud-heading">ZONE / OBJECT INTEL</div>
-      <div id="hud-intel-body" class="hud-feed">
-        <div class="hud-feed-item hud-muted">No intel yet.</div>
-      </div>
-    </section>
-
-    <!-- Panel 4: AI Tactical Analysis (placeholder for now) -->
-    <section id="hud-panel-ai" class="hud-panel">
-      <div class="hud-heading">AI ANALYSIS</div>
-      <div id="hud-ai-body" class="hud-feed">
-        <div class="hud-feed-item hud-muted">
-          AI link not initialized. (We’ll wire this up later.)
-        </div>
-      </div>
-    </section>
-  </div>
-
- <div id="hud-controls">
-    <button id="btn-drop-tag">DROP TAG</button>
-    <button id="btn-request-motion">ENABLE MOTION</button>
-   <button id="btn-hud-mode">HUD MODE</button>
-  <button id="btn-camera-mode">CAMERA MODE</button>
-  </div>
-
-<!-- CAMERA SCOPE MODE -->
+<!-- CAMERA MODE -->
 <div id="camera-mode" style="display:none;">
   <video id="camera-feed" autoplay playsinline></video>
 
-  <!-- Dynamic tag indicators -->
   <div id="camera-tags"></div>
 
-  <!-- Scope overlay -->
   <div id="camera-overlay">
     <div id="crosshair">
       <div class="crosshair-line vertical"></div>
@@ -94,11 +82,10 @@ MODE: ?
     <div id="consumer-tag-name">Object</div>
     <div id="consumer-tag-distance">0m</div>
   </div>
-
   <div id="direction-line"></div>
 </div>
 
-<!-- Controls -->
+<!-- SINGLE VALID BUTTON BLOCK -->
 <div id="hud-controls">
   <button id="btn-drop-tag">DROP TAG</button>
   <button id="btn-request-motion">ENABLE MOTION</button>
@@ -106,16 +93,6 @@ MODE: ?
   <button id="btn-camera-mode">CAMERA MODE</button>
 </div>
 
-<script src="main.js?v=2"></script>
+<script src="main.js?v=10"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
