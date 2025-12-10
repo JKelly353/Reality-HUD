@@ -377,11 +377,18 @@ function showHUDMode() {
 }
 
 function showCameraMode() {
+  console.log("SHOW CAMERA MODE FIRED");
+
   document.getElementById("hud-root").style.display = "none";
   document.getElementById("camera-mode").style.display = "block";
 
-   // 🔥 FORCE IT ON
+  const el = document.getElementById("consumer-mode");
+  console.log("consumer-mode element:", el);
+
+  // 🔥 FORCE this ON
   document.getElementById("consumer-mode").style.display = "block";
+
+  console.log("consumer-mode final display =", document.getElementById("consumer-mode").style.display);
 
   startCamera();
 }
@@ -503,6 +510,7 @@ function smoothGPS(lat, lon) {
 window.forceConsumerMode = () => {
   document.getElementById("consumer-mode").style.display = "block";
 };
+
 
 
 
