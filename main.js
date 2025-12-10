@@ -2,6 +2,25 @@
 // R-OS: HUD + Camera + Consumer Overlay + Soft-Stabilized AR Heading
 
 console.log("R-OS main.js loaded");
+// ==============================
+// GLOBAL STATE
+// ==============================
+
+let currentLat = null;
+let currentLon = null;
+
+let smoothHeading = null;      // smoothed sensor heading
+let displayHeading = null;     // heading actually used for UI (soft eased)
+let lastRawHeading = null;
+let lastHeadingTime = null;
+
+let smoothLat = null;
+let smoothLon = null;
+
+let testTags = [];          // auto-generated near user
+let activeTag = null;       // tag we are tracking in consumer mode
+let isConsumerActive = false;
+let currentMode = "HUD";    // "HUD" | "CAMERA"
 
 // ==============================
 // TAG SHEET UI CONTROLS
@@ -39,26 +58,6 @@ function closeTagSheet() {
   backdrop.style.pointerEvents = "none";
   sheet.style.bottom = "-260px";
 }
-
-// ==============================
-// GLOBAL STATE
-// ==============================
-
-let currentLat = null;
-let currentLon = null;
-
-let smoothHeading = null;      // smoothed sensor heading
-let displayHeading = null;     // heading actually used for UI (soft eased)
-let lastRawHeading = null;
-let lastHeadingTime = null;
-
-let smoothLat = null;
-let smoothLon = null;
-
-let testTags = [];          // auto-generated near user
-let activeTag = null;       // tag we are tracking in consumer mode
-let isConsumerActive = false;
-let currentMode = "HUD";    // "HUD" | "CAMERA"
 
 // ==============================
 // UTILS
@@ -693,4 +692,5 @@ window.addEventListener("DOMContentLoaded", () => {
   updateModeDebug();
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
 });
+
 
