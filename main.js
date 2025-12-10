@@ -884,7 +884,9 @@ window.addEventListener("DOMContentLoaded", () => {
   initGPS();
   updateModeDebug();
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
+  loadSavedTags();
 });
+
 
 
 
