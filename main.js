@@ -404,7 +404,9 @@ function startCamera() {
 
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-hud-mode").addEventListener("click", showHUDMode);
-  document.getElementById("btn-camera-mode").addEventListener("click", showCameraMode);
+  document.getElementById("btn-camera-mode").addEventListener("click", () => {
+  console.log("CAMERA MODE BUTTON CLICKED");
+  showCameraMode();
 });
 
 function toRad(x) {
@@ -501,6 +503,7 @@ function smoothGPS(lat, lon) {
 window.forceConsumerMode = () => {
   document.getElementById("consumer-mode").style.display = "block";
 };
+
 
 
 
