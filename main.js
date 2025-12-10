@@ -680,6 +680,70 @@ function initButtons() {
 
   document.body.appendChild(toggleBtn);
 }
+// ==============================
+// TAG CREATION (CROSSHAIR ANCHOR)
+// ==============================
+
+function createTagFromCrosshair() {
+  if (currentLat == null || currentLon == null) {
+    alert("GPS not ready yet.");
+    return;
+  }
+  if (displayHeading == null) {
+    alert("Orientation not ready yet.");
+    return;
+  }
+
+  // Save the heading + location
+  const newTag = {
+    id: Date.now(),
+    name: "",  // user enters after sheet opens
+    lat: currentLat,
+    lon: currentLon,
+    heading: displayHeading,
+  };
+
+  // Store temporarily until name is saved
+  window._pendingTag = newTag;
+
+  openTagSheet();
+}
+
+function saveTagName() {
+  const input = document.getElementById("tag-name-input");
+  if (!input) return;
+
+  const name = input.value.trim();
+  if (!name) {
+    alert("Please enter a name.");
+    return;
+  }
+
+  if (!window._pendingTag) return;
+
+  // Finalize tag
+  window._pendingTag.name = name;
+
+  // Load tag list
+  let stored = JSON.parse(localStorage.getItem("ros_tags") || "[]");
+
+  // Save new tag
+  stored.push(window._pendingTag);
+  localStorage.setItem("ros_tags", JSON.stringify(stored));
+
+  // Clear working memory
+  window._pendingTag = null;
+
+  input.value = "";
+  closeTagSheet();
+}
+
+function cancelTagCreation() {
+  window._pendingTag = null;
+  const input = document.getElementById("tag-name-input");
+  if (input) input.value = "";
+  closeTagSheet();
+}
 
 // ==============================
 // DOM READY
@@ -692,5 +756,6 @@ window.addEventListener("DOMContentLoaded", () => {
   updateModeDebug();
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
 });
+
 
 
