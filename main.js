@@ -41,6 +41,9 @@ function openTagSheet() {
   backdrop.style.pointerEvents = "auto";
   backdrop.style.opacity = "1";
 
+  document.getElementById("hud-controls").style.pointerEvents = "none";
+  document.getElementById("consumer-mode").style.pointerEvents = "none";
+
   // Slide sheet up
   sheet.style.transform = "translateY(0%)";
   sheet.style.opacity = "1";
@@ -56,6 +59,9 @@ function closeTagSheet() {
 
   backdrop.style.pointerEvents = "none";
   backdrop.style.opacity = "0";
+
+  document.getElementById("hud-controls").style.pointerEvents = "auto";
+  document.getElementById("consumer-mode").style.pointerEvents = "auto";
 
   sheet.style.transform = "translateY(100%)";
   sheet.style.opacity = "0";
@@ -764,3 +770,4 @@ window.addEventListener("DOMContentLoaded", () => {
   initButtons();
   loadSavedTags();
 });
+
