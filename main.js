@@ -698,11 +698,13 @@ function initButtons() {
   addBtn.textContent = "+ ADD TAG";
 
 addBtn.style.position = "fixed";
-addBtn.style.bottom = "26px";  
-addBtn.style.right = "22px";   // Move to bottom-right
+addBtn.style.top = "22px";      
+addBtn.style.right = "22px";    
 addBtn.style.left = "auto";
+addBtn.style.bottom = "auto";
+
 addBtn.style.zIndex = "999999";  
-addBtn.style.padding = "12px 18px";
+addBtn.style.padding = "10px 16px";
 addBtn.style.borderRadius = "12px";
 addBtn.style.border = "1px solid rgba(255,255,255,0.5)";
 addBtn.style.background = "rgba(255,255,255,0.25)";
@@ -710,6 +712,7 @@ addBtn.style.color = "white";
 addBtn.style.fontSize = "16px";
 addBtn.style.backdropFilter = "blur(10px)";
 addBtn.style.webkitBackdropFilter = "blur(10px)";
+
 
   addBtn.addEventListener("click", () => {
     if (currentMode === "CAMERA") {
@@ -888,6 +891,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
   loadSavedTags();
 });
+
 
 
 
