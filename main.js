@@ -18,6 +18,13 @@ let displayHeading = null;     // heading actually used for UI (soft eased)
 let lastRawHeading = null;
 let lastHeadingTime = null;
 
+let smoothPitch = null;
+let smoothRoll  = null;
+
+let lockedHeading = null;
+let lockedPitch   = null;
+let lastStableOrientationTime = null;
+
 let smoothLat = null;
 let smoothLon = null;
 
@@ -776,5 +783,6 @@ window.addEventListener("DOMContentLoaded", () => {
   initButtons();
   loadSavedTags();
 });
+
 
 
