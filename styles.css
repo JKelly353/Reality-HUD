@@ -251,77 +251,45 @@ body {
   z-index: 20000 !important;
 }
 
-/* ===============================
-   TAG CREATION BOTTOM SHEET
-================================ */
-
 #tag-sheet-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(6px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
-  z-index: 90000;
+  z-index: 9997;
 }
 
 #tag-sheet {
   position: fixed;
-  bottom: -260px; /* hidden off-screen */
   left: 0;
-  width: 100%;
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(12px);
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.3);
-  padding: 18px;
-  z-index: 91000;
-  transition: bottom 0.3s ease;
-}
-
-#tag-sheet-header {
-  font-size: 18px;
-  text-align: center;
-  margin-bottom: 12px;
-  color: white;
-  font-weight: 600;
-}
-
-#tag-name-input {
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.4);
-  background: rgba(255,255,255,0.15);
-  color: white;
-  margin-bottom: 14px;
-}
-
-#tag-name-input::placeholder {
-  color: rgba(255,255,255,0.6);
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(18px);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 20px;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  z-index: 9998;
 }
 
 #tag-sheet-buttons {
   display: flex;
   justify-content: space-between;
+  margin-top: 20px;
 }
 
-#tag-cancel-btn,
-#tag-save-btn {
-  flex: 1;
-  margin: 0 4px;
-  padding: 10px 0;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.4);
-  background: rgba(255,255,255,0.2);
-  color: white;
-  font-size: 15px;
+#tag-name-input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 16px;
+  font-size: 16px;
 }
 
-#tag-save-btn {
-  border-color: white;
-  background: rgba(255,255,255,0.35);
-}
