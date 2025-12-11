@@ -470,67 +470,64 @@ function initOrientation() {
   }
 
   window.addEventListener("deviceorientation", (event) => {
-    let heading = null;
+  const dbg = document.getElementById("debug-box");
+  if (dbg) dbg.textContent = "";
 
-    // Prefer true compass on iOS
-    if (typeof event.webkitCompassHeading === "number") {
-      heading = event.webkitCompassHeading;
-    } else if (typeof event.alpha === "number") {
-      heading = 360 - event.alpha;
-    } else {
-      return;
-    }
+  let heading = null;
 
-    heading = normalizeAngle(heading);
-    lastRawHeading = heading;
+  // True compass on iPhone
+  if (typeof event.webkitCompassHeading === "number") {
+    heading = event.webkitCompassHeading;
+  }
+  // Fallback to alpha if needed
+  else if (typeof event.alpha === "number") {
+    heading = 360 - event.alpha;
+  } else {
+    if (dbg) dbg.textContent += "NO HEADING\n";
+    return;
+  }
 
-    // 1) Smooth sensor heading
-    const stableHeading = smoothCompassHeading(heading);
-    window.displayHeading = stableHeading;
+  // Raw pitch/roll from deviceorientation
+  // beta: front-back tilt, gamma: left-right tilt
+  let pitch = typeof event.beta === "number" ? event.beta : 0;
+  let roll  = typeof event.gamma === "number" ? event.gamma : 0;
 
+  // Smooth heading as before
+  const stableHeading = smoothCompassHeading(heading);
 
-    // 2) Soft easing for final display
-    const uiHeading = updateDisplayHeading(stableHeading);
+  // Store globally for tag creation
+  currentHeading = stableHeading;
+  currentPitch   = pitch;
+  currentRoll    = roll;
 
-    // HUD heading (cardinal)
-    updateHeadingDisplay(uiHeading);
+  // Also keep old naming for compatibility
+  window.displayHeading = stableHeading;
 
-    // Debug (HUD only)
-    setDebug(
-      `Raw: ${heading.toFixed(1)}°\n` +
-      `Stable: ${stableHeading.toFixed(1)}°\n` +
-      `Display: ${uiHeading.toFixed(1)}°\n` +
-      `Lat: ${currentLat?.toFixed?.(5) ?? "--"}\n` +
-      `Lon: ${currentLon?.toFixed?.(5) ?? "--"}`
-    );
+  // Debug
+  if (dbg) {
+    dbg.textContent += `Heading: ${stableHeading.toFixed(1)}\n`;
+    dbg.textContent += `Pitch:   ${pitch.toFixed(1)}\n`;
+    dbg.textContent += `Roll:    ${roll.toFixed(1)}\n`;
+  }
 
-    // Camera / AR UI
-    if (currentLat != null && currentLon != null) {
-      updateCameraTags(currentLat, currentLon, uiHeading);
+  // HUD compass text
+  updateHeading(stableHeading);
 
-      if (currentMode === "CAMERA" && isConsumerActive && activeTag) {
-        const d = distanceBetween(
-          currentLat,
-          currentLon,
-          activeTag.lat,
-          activeTag.lon
-        );
-        const bearing = bearingTo(
-          currentLat,
-          currentLon,
-          activeTag.lat,
-          activeTag.lon
-        );
-        let diff = angleDiff(bearing, uiHeading);
+  // Camera AR tags
+  if (currentLat != null && currentLon != null) {
+    updateCameraTags(currentLat, currentLon, stableHeading);
+  }
 
-        updateConsumerDirection(diff);
-        updateConsumerTagInfo(activeTag.name, d);
-      } else {
-        clearConsumerTagInfo();
-      }
-    }
-  });
-}
+  // Consumer directional line / card
+  if (isConsumerActive && activeTag && currentLat != null && currentLon != null) {
+    const d = distanceBetween(currentLat, currentLon, activeTag.lat, activeTag.lon);
+    const bearing = bearingTo(currentLat, currentLon, activeTag.lat, activeTag.lon);
+    let diff = ((bearing - stableHeading + 540) % 360) - 180;
+
+    updateConsumerDirection(diff);
+    updateConsumerTagInfo(activeTag.name, d);
+  }
+});
 
 // ==============================
 // MOTION PERMISSION (iOS)
@@ -930,6 +927,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
   loadSavedTags();
 });
+
 
 
 
