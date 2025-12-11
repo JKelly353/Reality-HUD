@@ -728,10 +728,32 @@ addBtn.style.webkitBackdropFilter = "blur(10px)";
 // ==============================
 
 function createTagFromCrosshair() {
-  if (currentLat == null || currentLon == null) {
-    alert("GPS not ready yet.");
+  // If GPS hasn't locked yet, use last known location
+  if (window.currentLat == null || window.currentLon == null) {
+    console.warn("GPS not ready, trying last known location...");
+
+    let saved = JSON.parse(localStorage.getItem("ros_last_location") || "null");
+
+    if (saved) {
+      window.currentLat = saved.lat;
+      window.currentLon = saved.lon;
+    } else {
+      alert("GPS still initializing... try near a window.");
+      return;
+    }
+  }
+
+  // Save last known good location every time
+  localStorage.setItem(
+    "ros_last_location",
+    JSON.stringify({ lat: window.currentLat, lon: window.currentLon })
+  );
+
+  if (window.displayHeading == null) {
+    alert("Compass not ready yet.");
     return;
   }
+
   if (displayHeading == null) {
     alert("Orientation not ready yet.");
     return;
@@ -891,6 +913,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
   loadSavedTags();
 });
+
 
 
 
