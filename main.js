@@ -483,6 +483,8 @@ function initOrientation() {
 
     // 1) Smooth sensor heading
     const stableHeading = smoothCompassHeading(heading);
+    window.displayHeading = stableHeading;
+
 
     // 2) Soft easing for final display
     const uiHeading = updateDisplayHeading(stableHeading);
@@ -925,6 +927,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
   loadSavedTags();
 });
+
 
 
 
