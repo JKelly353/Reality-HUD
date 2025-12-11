@@ -250,4 +250,14 @@ body {
   border: 1px solid rgba(255,255,255,0.3);
 }
 
+#camera-tags,
+#camera-tags * {
+  pointer-events: none !important;
+}
+
+#consumer-mode,
+#consumer-mode * {
+  pointer-events: none !important;
+}
+
 
