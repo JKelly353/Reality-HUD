@@ -8,6 +8,9 @@ console.log("R-OS main.js loaded");
 
 let currentLat = null;
 let currentLon = null;
+let currentHeading = null;   // smoothed compass heading
+let currentPitch = null;     // device tilt front-back (beta)
+let currentRoll = null;      // device tilt left-right (gamma);
 
 let smoothHeading = null;      // smoothed sensor heading
 let displayHeading = null;     // heading actually used for UI (soft eased)
@@ -927,6 +930,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
   loadSavedTags();
 });
+
 
 
 
