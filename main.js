@@ -398,57 +398,62 @@ function updateCameraTags(userLat, userLon, userHeading) {
   if (!container) return;
 
   container.innerHTML = ""; // clear old indicators
-
   if (!testTags || testTags.length === 0) return;
 
-  const screenWidth = window.innerWidth;
+  const screenWidth  = window.innerWidth;
   const screenHeight = window.innerHeight;
 
   testTags.forEach((tag, index) => {
     const d = distanceBetween(userLat, userLon, tag.lat, tag.lon);
-    const bearing = bearingTo(userLat, userLon, tag.lat, tag.lon);
 
-    // Horizontal: angle difference based on heading
-    let diff = ((bearing - userHeading + 540) % 360) - 180;
+    // Horizontal anchoring:
+    // Prefer the heading at placement; fallback to bearing if not saved.
+    let anchorHeading;
+    if (typeof tag.heading === "number") {
+      anchorHeading = tag.heading;
+    } else {
+      anchorHeading = bearingTo(userLat, userLon, tag.lat, tag.lon);
+    }
 
-    // If more than 90° behind, show as behind-indicator
-    if (Math.abs(diff) > 90) {
-      const el = document.createElement("div");
-      el.className = "camera-tag behind";
-      el.textContent = `◀ ${tag.name} (${Math.round(d)}m)`;
-      container.appendChild(el);
+    // How far off are we from the placement heading?
+    let headingDiff = ((anchorHeading - userHeading + 540) % 360) - 180;
+
+    // If it's far behind you, show behind indicator
+    if (Math.abs(headingDiff) > 95) {
+      const behindEl = document.createElement("div");
+      behindEl.className = "camera-tag behind";
+      behindEl.textContent = `◀ ${tag.name || "TAG"} (${Math.round(d)}m)`;
+      container.appendChild(behindEl);
       return;
     }
 
-    // Map -90..90° horizontally across the screen
-    const xOffset = (diff / 90) * (screenWidth / 2);
-    const x = screenWidth / 2 + xOffset;
+    // Map heading difference to horizontal position
+    // -90..90 → left..right
+    const maxAngle = 60; // degrees of strong response
+    const clampedHeading = Math.max(-maxAngle, Math.min(maxAngle, headingDiff));
+    const xNorm = clampedHeading / maxAngle; // -1..1
+    const x = screenWidth / 2 + xNorm * (screenWidth / 2 * 0.8);
 
-    // Vertical: use pitch difference if available
-    let pitchDiff = 0;
+    // Vertical anchoring using pitch difference if available
+    let y = screenHeight * 0.5; // base vertical center
     if (typeof tag.pitch === "number" && typeof currentPitch === "number") {
-      // Positive pitchDiff means tag was placed above current view
-      pitchDiff = tag.pitch - currentPitch;
+      const pitchDiff = tag.pitch - currentPitch; // + means tag was above current view
+      const maxPitchRange = 40; // degrees
+      const clampedPitch = Math.max(-maxPitchRange, Math.min(maxPitchRange, pitchDiff));
+      const yNorm = clampedPitch / maxPitchRange; // -1..1
+      const maxYOffset = screenHeight / 4;
+      y = screenHeight * 0.5 - yNorm * maxYOffset;
     }
 
-    // Map pitch difference into vertical pixels
-    // Clamp to a safe range so things don't fly off-screen
-    const maxPitchDiff = 40; // degrees
-    const clampedPitch = Math.max(-maxPitchDiff, Math.min(maxPitchDiff, pitchDiff));
-
-    // We'll shift up/down up to a quarter of the screen height
-    const maxYOffset = screenHeight / 4;
-    const yOffset = (clampedPitch / maxPitchDiff) * maxYOffset;
-
-    const baseY = screenHeight * 0.5; // middle of screen
-    const y = baseY - yOffset + index * 24; // stack slightly for multiple tags
+    // Slight stacking offset for multiple tags
+    y += index * 26;
 
     const tagEl = document.createElement("div");
     tagEl.className = "camera-tag";
     tagEl.style.left = `${x}px`;
-    tagEl.style.top = `${y}px`;
+    tagEl.style.top  = `${y}px`;
+    tagEl.textContent = `▶ ${tag.name || "TAG"} (${Math.round(d)}m)`;
 
-    tagEl.textContent = `▶ ${tag.name} (${Math.round(d)}m)`;
     container.appendChild(tagEl);
   });
 }
@@ -845,6 +850,7 @@ window.addEventListener("DOMContentLoaded", () => {
   initButtons();
   loadSavedTags();
 });
+
 
 
 
