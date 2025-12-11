@@ -252,17 +252,78 @@ function initGPS() {
 // COMPASS / HEADING
 // ==============================
 
+function angularDiff(a, b) {
+  // shortest angular distance between two headings
+  let d = ((a - b + 540) % 360) - 180;
+  return Math.abs(d);
+}
+
 function smoothCompassHeading(raw) {
-  if (smoothHeading === null) smoothHeading = raw;
+  if (smoothHeading === null) {
+    smoothHeading = raw;
+    lastRawHeading = raw;
+    lastHeadingTime = performance.now();
+    return raw;
+  }
 
   const now = performance.now();
-  if (lastRawHeading != null && lastHeadingTime != null) {
-    const dt = now - lastHeadingTime;
-    const diff = Math.abs(raw - lastRawHeading);
-    // reduce jitter
-    if (Math.abs(diff) < 0.8 && dt < 150) {
-      return smoothHeading;
-    }
+  const dt = now - lastHeadingTime;
+  const diff = angularDiff(raw, lastRawHeading);
+
+  // Tiny jitter in short time? ignore
+  if (diff < 0.8 && dt < 120) {
+    return smoothHeading;
+  }
+
+  const alpha = 0.08; // <- HIGH stability
+  smoothHeading = alpha * raw + (1 - alpha) * smoothHeading;
+
+  lastRawHeading = raw;
+  lastHeadingTime = now;
+
+  return smoothHeading;
+}
+
+function smoothOrientation(raw, prev, alpha = 0.12) {
+  if (prev === null) return raw;
+  return alpha * raw + (1 - alpha) * prev;
+}
+
+// High-stability orientation with micro-motion freezing
+function getStabilizedOrientation(rawHeading, rawPitch) {
+  const now = performance.now();
+
+  const stableHeading = smoothCompassHeading(rawHeading);
+  smoothPitch = smoothOrientation(rawPitch, smoothPitch, 0.14);
+
+  const stablePitch = smoothPitch;
+
+  if (lockedHeading === null) {
+    lockedHeading = stableHeading;
+    lockedPitch   = stablePitch;
+    lastStableOrientationTime = now;
+    return { heading: stableHeading, pitch: stablePitch };
+  }
+
+  const hDelta = angularDiff(stableHeading, lockedHeading);
+  const pDelta = Math.abs(stablePitch - lockedPitch);
+
+  const verySmallMotion = hDelta < 0.6 && pDelta < 0.4;
+  const recentlyStable  = now - lastStableOrientationTime < 250;
+
+  // 🔒 Freeze when motion is tiny (micro-jitter zone)
+  if (verySmallMotion || recentlyStable) {
+    lastStableOrientationTime = now;
+    return { heading: lockedHeading, pitch: lockedPitch };
+  }
+
+  // Significant motion → update lock
+  lockedHeading = stableHeading;
+  lockedPitch   = stablePitch;
+  lastStableOrientationTime = now;
+
+  return { heading: stableHeading, pitch: stablePitch };
+}
   }
 
   const alpha = 0.05;
@@ -783,6 +844,7 @@ window.addEventListener("DOMContentLoaded", () => {
   initButtons();
   loadSavedTags();
 });
+
 
 
 
