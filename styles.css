@@ -1,7 +1,6 @@
 /* ===============================
    GLOBAL RESET + BASE
 ================================ */
-
 * {
   margin: 0;
   padding: 0;
@@ -18,7 +17,6 @@ body {
 /* ===============================
    CAMERA FEED
 ================================ */
-
 #camera-feed {
   position: fixed;
   inset: 0;
@@ -29,21 +27,19 @@ body {
 }
 
 /* ===============================
-   HUD ROOT
+   HUD ROOT (text panels)
 ================================ */
-
 #hud-root {
   position: fixed;
   inset: 0;
-  color: white;
-  z-index: 5;
   padding: 12px;
+  z-index: 5;
 }
 
 .hud-panel {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
   padding: 12px;
   margin-bottom: 12px;
   backdrop-filter: blur(8px);
@@ -52,26 +48,17 @@ body {
 .hud-heading {
   font-weight: 600;
   margin-bottom: 4px;
-  opacity: 0.9;
-}
-
-.hud-feed {
-  font-size: 14px;
-  opacity: 0.9;
 }
 
 .hud-feed-item {
   margin-bottom: 6px;
 }
 
-.hud-muted {
-  opacity: 0.6;
-}
+.hud-muted { opacity: 0.6; }
 
 /* ===============================
-   HUD CONTROLS
+   HUD CONTROLS (buttons)
 ================================ */
-
 #hud-controls {
   position: fixed;
   bottom: 12px;
@@ -79,55 +66,35 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  z-index: 30000;
+  z-index: 9000; /* BELOW tag sheet */
 }
 
 #hud-controls button {
-  padding: 8px 14px;
-  font-size: 14px;
-  background: rgba(255, 255, 255, 0.12);
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.15);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 12px;
-  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(8px);
 }
 
 /* ===============================
-   DEBUG BOX (HUD only)
+   DEBUG BOX
 ================================ */
-
 #debug-box {
   position: fixed;
   top: 10px;
   right: 10px;
-  min-width: 130px;
   padding: 10px;
   background: rgba(0,0,0,0.6);
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.15);
   font-size: 12px;
-  white-space: pre-wrap;
-  z-index: 50000;
-}
-
-#mode-debug {
-  position: fixed;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 8px 14px;
-  font-size: 14px;
-  background: rgba(0,0,0,0.6);
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
   z-index: 50000;
 }
 
 /* ===============================
-   CONSUMER MODE OVERLAY
+   CONSUMER MODE TAG CARD
 ================================ */
-
 #consumer-mode {
   position: fixed;
   inset: 0;
@@ -140,19 +107,16 @@ body {
   top: 12%;
   left: 50%;
   transform: translateX(-50%);
-  padding: 12px 18px;
+  padding: 14px 22px;
   background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.35);
-  color: white;
   border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.3);
   backdrop-filter: blur(8px);
   font-size: 16px;
-  text-align: center;
   opacity: 0;
-  transition: opacity 0.25s ease;
 }
 
-/* Direction line (center arrow indicator) */
+/* Direction Line */
 #direction-line {
   position: absolute;
   left: 50%;
@@ -160,24 +124,20 @@ body {
   width: 2px;
   height: 130px;
   background: white;
-  opacity: 0.9;
   transform-origin: top center;
-  z-index: 45;
 }
 
 /* ===============================
-   CROSSHAIR (Clean White AR)
+   AR CROSSHAIR
 ================================ */
-
 #crosshair {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 58px;
-  height: 58px;
+  width: 60px;
+  height: 60px;
   transform: translate(-50%, -50%);
   z-index: 35;
-  pointer-events: none;
 }
 
 .crosshair-line {
@@ -186,75 +146,34 @@ body {
   opacity: 0.9;
 }
 
-.crosshair-line.vertical {
-  width: 2px;
-  height: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.crosshair-line.horizontal {
-  height: 2px;
-  width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-}
+.crosshair-line.vertical { width: 2px; height: 100%; left: 50%; transform: translateX(-50%); }
+.crosshair-line.horizontal { height: 2px; width: 100%; top: 50%; transform: translateY(-50%); }
 
 /* ===============================
-   CAMERA TAGS (Floating markers)
+   CAMERA TAGS
 ================================ */
-
 .camera-tag {
   position: absolute;
-  font-size: 14px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.3);
   border-radius: 14px;
-  color: white;
-  backdrop-filter: blur(6px);
-  pointer-events: none;
+  backdrop-filter: blur(8px);
   z-index: 50;
 }
 
 .camera-tag.behind {
-  background: rgba(255,60,60,0.25);
-  border-color: rgba(255,60,60,0.45);
+  background: rgba(255,80,80,0.25);
+  border-color: rgba(255,80,80,0.4);
 }
 
 /* ===============================
-   CAMERA OVERLAY (container only)
+   TAG-SHEET BACKDROP
 ================================ */
-
-#camera-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  pointer-events: none;
-}
-
-/* ===============================
-   AR OVERLAY TOGGLE BUTTON
-================================ */
-
-#consumer-toggle {
-  position: fixed !important;
-  bottom: 22px !important;
-  right: 22px !important;
-  padding: 8px 14px !important;
-  font-size: 12px !important;
-  background: rgba(255,255,255,0.15) !important;
-  color: white !important;
-  border-radius: 12px !important;
-  border: 1px solid rgba(255,255,255,0.35) !important;
-  backdrop-filter: blur(6px) !important;
-  z-index: 20000 !important;
-}
-
 #tag-sheet-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.45);
   backdrop-filter: blur(6px);
   opacity: 0;
   pointer-events: none;
@@ -262,34 +181,63 @@ body {
   z-index: 9997;
 }
 
+/* ===============================
+   TAG-SHEET PANEL
+================================ */
 #tag-sheet {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(18px);
+  background: rgba(30,30,30,0.85);
+  backdrop-filter: blur(22px);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  padding: 20px;
+  padding: 24px;
   transform: translateY(100%);
   opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  z-index: 9998;
+  transition: transform .3s ease, opacity .3s ease;
+  z-index: 9998; /* ABOVE buttons */
 }
 
-#tag-sheet-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+#tag-sheet-header {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: white;
 }
 
 #tag-name-input {
   width: 100%;
-  padding: 14px;
-  border-radius: 10px;
+  padding: 16px;
+  border-radius: 12px;
   border: none;
-  margin-top: 16px;
+  background: rgba(255,255,255,0.15);
+  color: white;
   font-size: 16px;
 }
 
+#tag-sheet-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#tag-save-btn,
+#tag-cancel-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  border: none;
+  color: white;
+}
+
+#tag-save-btn {
+  background: rgba(80,160,255,0.4);
+  border: 1px solid rgba(80,160,255,0.6);
+}
+
+#tag-cancel-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+}
