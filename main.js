@@ -730,49 +730,48 @@ addBtn.style.webkitBackdropFilter = "blur(10px)";
 // ==============================
 
 function createTagFromCrosshair() {
-  // If GPS hasn't locked yet, use last known location
-  if (window.currentLat == null || window.currentLon == null) {
-    console.warn("GPS not ready, trying last known location...");
+
+  // 1. GPS fallback
+  if (currentLat == null || currentLon == null) {
+    console.warn("GPS not ready, using last known location...");
 
     let saved = JSON.parse(localStorage.getItem("ros_last_location") || "null");
 
     if (saved) {
-      window.currentLat = saved.lat;
-      window.currentLon = saved.lon;
+      currentLat = saved.lat;
+      currentLon = saved.lon;
     } else {
-      alert("GPS still initializing... try near a window.");
+      alert("GPS still initializing… try near a window.");
       return;
     }
   }
 
-  // Save last known good location every time
-  localStorage.setItem(
-    "ros_last_location",
-    JSON.stringify({ lat: window.currentLat, lon: window.currentLon })
-  );
-
-  if (window.displayHeading == null) {
+  // 2. Heading + pitch must be ready
+  if (currentHeading == null || window.displayHeading == null) {
     alert("Compass not ready yet.");
     return;
   }
 
-  if (displayHeading == null) {
-    alert("Orientation not ready yet.");
+  if (currentPitch == null) {
+    alert("Device orientation not ready. Move your phone a bit.");
     return;
   }
 
-  // Save the heading + location
+  // 3. Build tag with full orientation
   const newTag = {
     id: Date.now(),
-    name: "",  // user enters after sheet opens
+    name: "",
     lat: currentLat,
     lon: currentLon,
-    heading: displayHeading,
+    heading: currentHeading,   // where you were facing
+    pitch: currentPitch,       // up/down tilt
+    roll: currentRoll          // side tilt (we may use later)
   };
 
-  // Store temporarily until name is saved
+  // 4. Keep it pending until user names it
   window._pendingTag = newTag;
 
+  // 5. Open bottom sheet
   openTagSheet();
 }
 
@@ -927,6 +926,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
   loadSavedTags();
 });
+
 
 
 
