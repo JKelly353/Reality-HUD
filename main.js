@@ -324,16 +324,6 @@ function getStabilizedOrientation(rawHeading, rawPitch) {
 
   return { heading: stableHeading, pitch: stablePitch };
 }
-  }
-
-  const alpha = 0.05;
-  smoothHeading = alpha * raw + (1 - alpha) * smoothHeading;
-
-  lastRawHeading = raw;
-  lastHeadingTime = now;
-
-  return smoothHeading;
-}
 
 function degreesToCardinal(deg) {
   if (deg >= 337.5 || deg < 22.5) return "N ↑";
@@ -850,6 +840,7 @@ window.addEventListener("DOMContentLoaded", () => {
   initButtons();
   loadSavedTags();
 });
+
 
 
 
