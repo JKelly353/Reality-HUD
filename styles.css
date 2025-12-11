@@ -196,6 +196,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
+  pointer-events: auto;
   background: rgba(30,30,30,0.85);
   backdrop-filter: blur(22px);
   border-top-left-radius: 20px;
@@ -248,4 +249,5 @@ body {
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.3);
 }
+
 
