@@ -434,15 +434,21 @@ function updateCameraTags(userLat, userLon, userHeading) {
   const container = document.getElementById("camera-tags");
   if (!container) return;
 
-  container.innerHTML = "";
+  container.innerHTML = ""; // clear old indicators
+
+  if (!testTags || testTags.length === 0) return;
+
+  const screenWidth  = window.innerWidth;
+  const screenHeight = window.innerHeight;
 
   testTags.forEach((tag, index) => {
     const d = distanceBetween(userLat, userLon, tag.lat, tag.lon);
     const bearing = bearingTo(userLat, userLon, tag.lat, tag.lon);
 
-    let diff = angleDiff(bearing, userHeading);
+    // Horizontal: angle difference based on heading
+    let diff = ((bearing - userHeading + 540) % 360) - 180;
 
-    // If behind, show alternate marker
+    // If more than 90° behind, show as behind-indicator
     if (Math.abs(diff) > 90) {
       const el = document.createElement("div");
       el.className = "camera-tag behind";
@@ -451,13 +457,34 @@ function updateCameraTags(userLat, userLon, userHeading) {
       return;
     }
 
-    const screenWidth = window.innerWidth;
-    const x = (diff / 90) * (screenWidth / 2);
+    // Map -90..90° horizontally across the screen
+    const xOffset = (diff / 90) * (screenWidth / 2);
+    const x = (screenWidth / 2) + xOffset;
+
+    // Vertical: use pitch difference if available
+    let pitchDiff = 0;
+    if (typeof tag.pitch === "number" && typeof currentPitch === "number") {
+      // Positive pitchDiff means tag was placed above current view
+      pitchDiff = tag.pitch - currentPitch;
+    }
+
+    // Map pitch difference into vertical pixels
+    // Clamp to a safe range so things don't fly off-screen
+    const maxPitchDiff = 40; // degrees
+    const clampedPitch = Math.max(-maxPitchDiff, Math.min(maxPitchDiff, pitchDiff));
+
+    // We'll shift up/down up to a quarter of the screen height
+    const maxYOffset = screenHeight / 4;
+    const yOffset = (clampedPitch / maxPitchDiff) * maxYOffset;
+
+    const baseY = screenHeight * 0.5; // middle of screen
+    const y = baseY - yOffset + index * 24; // stack slightly for multiple tags
 
     const tagEl = document.createElement("div");
     tagEl.className = "camera-tag";
-    tagEl.style.left = `${screenWidth / 2 + x}px`;
-    tagEl.style.top = `${55 + index * 6}%`;
+    tagEl.style.left = `${x}px`;
+    tagEl.style.top  = `${y}px`;
+
     tagEl.textContent = `▶ ${tag.name} (${Math.round(d)}m)`;
     container.appendChild(tagEl);
   });
@@ -926,6 +953,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
   loadSavedTags();
 });
+
 
 
 
