@@ -813,33 +813,45 @@ function cancelTagCreation() {
 // TAG CREATION (CROSSHAIR ANCHOR)
 // ==============================
 
-// This function is called when user taps + ADD TAG
 function createTagFromCrosshair() {
-  if (window.currentLat == null || window.currentLon == null) {
-    alert("GPS still initializing...");
-    return;
+
+  // ⭐ 1. Fix GPS initializing — use last known location
+  if (currentLat == null || currentLon == null) {
+    console.warn("GPS not ready, using last known location...");
+
+    let saved = JSON.parse(localStorage.getItem("ros_last_location") || "null");
+
+    if (saved) {
+      currentLat = saved.lat;
+      currentLon = saved.lon;
+    } else {
+      alert("GPS still initializing… try near a window.");
+      return;
+    }
   }
 
+  // ⭐ 2. Compass must be ready
   if (window.displayHeading == null) {
     alert("Compass not ready yet.");
     return;
   }
 
-  // Create the tag object (user will name it next)
+  // ⭐ 3. Build the new tag (no name yet)
   const newTag = {
     id: Date.now(),
     name: "",
-    lat: window.currentLat,
-    lon: window.currentLon,
-    heading: window.displayHeading,
+    lat: currentLat,
+    lon: currentLon,
+    heading: displayHeading,
   };
 
-  // Store temporarily before user enters a name
+  // Temporarily store until user names it
   window._pendingTag = newTag;
 
-  // Open bottom sheet
+  // Open name sheet
   openTagSheet();
 }
+
 
 // Save button — finalize the tag
 function saveTagName() {
@@ -913,6 +925,7 @@ window.addEventListener("DOMContentLoaded", () => {
   setDebug("HUD READY. Tap ENABLE MOTION, then CAMERA MODE.");
   loadSavedTags();
 });
+
 
 
 
