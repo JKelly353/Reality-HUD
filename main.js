@@ -481,27 +481,26 @@ function initOrientation() {
       return;
     }
 
-    // Raw pitch/roll from deviceorientation
-    // beta: front-back tilt, gamma: left-right tilt
-    let pitch = typeof event.beta === "number" ? event.beta : 0;
-    let roll = typeof event.gamma === "number" ? event.gamma : 0;
+    // Raw pitch/roll
+    let rawPitch = typeof event.beta === "number" ? event.beta : 0;
+    let rawRoll  = typeof event.gamma === "number" ? event.gamma : 0;
 
-    // Smooth heading as before
-    const stableHeading = smoothCompassHeading(heading);
+    // 🔥 High-stability orientation
+    const { heading: stableHeading, pitch: stablePitch } =
+      getStabilizedOrientation(heading, rawPitch);
 
-    // Store globally for tag creation
+    // Store globally
     currentHeading = stableHeading;
-    currentPitch = pitch;
-    currentRoll = roll;
+    currentPitch   = stablePitch;
+    currentRoll    = smoothOrientation(rawRoll, smoothRoll, 0.18);
+    smoothRoll     = currentRoll;
 
-    // Also keep old naming for compatibility
     window.displayHeading = stableHeading;
 
-    // Debug
     if (dbg) {
-      dbg.textContent += `Heading: ${stableHeading.toFixed(1)}\n`;
-      dbg.textContent += `Pitch:   ${pitch.toFixed(1)}\n`;
-      dbg.textContent += `Roll:    ${roll.toFixed(1)}\n`;
+      dbg.textContent += `H: ${stableHeading.toFixed(1)}\n`;
+      dbg.textContent += `P: ${stablePitch.toFixed(1)}\n`;
+      dbg.textContent += `R: ${currentRoll.toFixed(1)}\n`;
     }
 
     // HUD compass text
@@ -515,6 +514,7 @@ function initOrientation() {
     // Consumer directional line / card
     if (isConsumerActive && activeTag && currentLat != null && currentLon != null) {
       const d = distanceBetween(currentLat, currentLon, activeTag.lat, activeTag.lon);
+
       const bearing = bearingTo(currentLat, currentLon, activeTag.lat, activeTag.lon);
       let diff = ((bearing - stableHeading + 540) % 360) - 180;
 
@@ -523,6 +523,7 @@ function initOrientation() {
     }
   });
 }
+
 
 // ==============================
 // MOTION PERMISSION (iOS)
@@ -844,6 +845,7 @@ window.addEventListener("DOMContentLoaded", () => {
   initButtons();
   loadSavedTags();
 });
+
 
 
 
