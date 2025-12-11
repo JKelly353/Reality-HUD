@@ -11,21 +11,8 @@
 
 <body>
 
-<!-- DEBUG OVERLAYS -->
+<!-- DEBUG OVERLAY -->
 <div id="debug-box">DEBUG READY</div>
-<div id="mode-debug"
-style="
-  position:fixed;
-  bottom:40px;
-  left:10px;
-  padding:8px 12px;
-  background:red;
-  color:white;
-  font-size:14px;
-  z-index:999999;
-">
-MODE: ?
-</div>
 
 <!-- HUD ROOT -->
 <div id="hud-root">
@@ -85,12 +72,13 @@ MODE: ?
   <div id="direction-line"></div>
 </div>
 
-<!-- SINGLE VALID BUTTON BLOCK -->
+<!-- BUTTONS -->
 <div id="hud-controls">
   <button id="btn-request-motion">ENABLE MOTION</button>
   <button id="btn-hud-mode">HUD MODE</button>
   <button id="btn-camera-mode">CAMERA MODE</button>
 </div>
+
 <!-- TAG SHEET BACKDROP -->
 <div id="tag-sheet-backdrop"></div>
 
@@ -107,10 +95,7 @@ MODE: ?
     <button id="tag-cancel-btn">Cancel</button>
   </div>
 </div>
-  
-<script src="main.js?v=10"></script>
+
+<script src="main.js"></script>
 </body>
 </html>
-
-
-
