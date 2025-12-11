@@ -568,15 +568,21 @@ function showCameraMode() {
 // ==============================
 
 function initButtons() {
-  const dropBtn = document.getElementById("btn-drop-tag");
+  const dropBtn   = document.getElementById("btn-drop-tag");
   const motionBtn = document.getElementById("btn-request-motion");
-  const hudBtn = document.getElementById("btn-hud-mode");
-  const camBtn = document.getElementById("btn-camera-mode");
+  const hudBtn    = document.getElementById("btn-hud-mode");
+  const camBtn    = document.getElementById("btn-camera-mode");
+  const saveBtn   = document.getElementById("tag-save-btn");
+  const cancelBtn = document.getElementById("tag-cancel-btn");
 
-  if (dropBtn) dropBtn.addEventListener("click", dropSpatialTag);
+  if (dropBtn)   dropBtn.addEventListener("click", dropSpatialTag);
   if (motionBtn) motionBtn.addEventListener("click", requestMotionAccess);
-  if (hudBtn) hudBtn.addEventListener("click", showHUDMode);
-  if (camBtn) camBtn.addEventListener("click", showCameraMode);
+  if (hudBtn)    hudBtn.addEventListener("click", showHUDMode);
+  if (camBtn)    camBtn.addEventListener("click", showCameraMode);
+
+  // ⭐ Wire up the tag sheet buttons
+  if (saveBtn)   saveBtn.addEventListener("click", saveTagName);
+  if (cancelBtn) cancelBtn.addEventListener("click", cancelTagCreation);
 
   // AR OVERLAY toggle button
   const toggleBtn = document.getElementById("consumer-toggle");
@@ -770,4 +776,5 @@ window.addEventListener("DOMContentLoaded", () => {
   initButtons();
   loadSavedTags();
 });
+
 
